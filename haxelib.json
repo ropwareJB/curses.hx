@@ -1,0 +1,13 @@
+{
+    "name"         : "curses",
+    "url"          : "",
+    "license"      : "MIT",
+    "tags"         : ["cross"],
+    "description"  : "Curses externs!",
+    "version"      : "0.1.0",
+    "releasenote"  : "",
+    "classPath"    : "src",
+    "contributors" : ["epidevJosh"],
+    "dependencies" : {
+    }
+}
