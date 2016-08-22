@@ -1,6 +1,6 @@
 package curses.py;
 
-import python.Tuple3;
+import python.Tuple;
 
 @:enum abstract CURS_VISIBLITY(Int) to Int{
 	var INVISIBLE = 0;
@@ -8,9 +8,23 @@ import python.Tuple3;
 	var VISIBLE = 2;
 }
 
+@:enum abstract COLOR(Int) to Int{
+	var COLOR_BLACK   = 0;
+	var COLOR_RED     = 1;
+	var COLOR_GREEN   = 2;
+	var COLOR_YELLOW  = 3;
+	var COLOR_BLUE    = 4;
+	var COLOR_MAGENTA = 5;
+	var COLOR_CYAN    = 6;
+	var COLOR_WHITE   = 7;
+}
+
 @:native("curses")
+@:pythonImport("curses")
 @:final extern class Curses{
 /* https://docs.python.org/3.5/library/curses.html#module-curses */
+
+	public static var COLORS:Int;
 	
 	public static function baudrate():Int;
 	/* Return the output speed of the terminal in bits per second. On software terminal emulators it will have a fixed high value. Included for historical reasons; in former times, it was used to write output loops for time delays and occasionally to change interfaces depending on the line speed.*/
@@ -27,7 +41,7 @@ import python.Tuple3;
 	public static function color_content(color_number:Int):Tuple3<Int,Int,Int>;
 	/* Return the intensity of the red, green, and blue (RGB) components in the color color_number, which must be between 0 and COLORS. A 3-tuple is returned, containing the R,G,B values for the given color, which will be between 0 (no component) and 1000 (maximum amount of component). */
 
-	public static function color_pair(color_number:Int):Void;
+	public static function color_pair(color_number:Int):Int;
 	/* Return the attribute value for displaying text in the specified color. This attribute value can be combined with A_STANDOUT, A_REVERSE, and the other A_* attributes. pair_number() is the counterpart to this function. */
 
 	public static function curs_set(visibility:CURS_VISIBLITY):Void;
@@ -71,7 +85,7 @@ import python.Tuple3;
 	public static function getsyx():Tuple2<Int,Int>;
 	/* Return the current coordinates of the virtual screen cursor in y and x. If leaveok is currently true, then -1,-1 is returned. */
 
-	public static function getwin(file:String):Window.g;
+	public static function getwin(file:String):Window;
 	/* Read window related data stored in the file by an earlier putwin() call. The routine then creates and initializes a new window using that data, returning the new window object. */
 
 	public static function has_colors():Bool;
@@ -95,8 +109,8 @@ import python.Tuple3;
 	public static function init_pair(pair_number:Int, fg:Int, bg:Int):Void;
 	/* Change the definition of a color-pair. It takes three arguments: the number of the color-pair to be changed, the foreground color number, and the background color number. The value of pair_number must be between 1 and COLOR_PAIRS - 1 (the 0 color pair is wired to white on black and cannot be changed). The value of fg and bg arguments must be between 0 and COLORS. If the color-pair was previously initialized, the screen is refreshed and all occurrences of that color-pair are changed to the new definition. */
 
-	public static function initscr():Window.g;
-	/* Initialize the library. Return a Window.g which represents the whole screen. */
+	public static function initscr():Window;
+	/* Initialize the library. Return a Window which represents the whole screen. */
 	/* Note If there is an error opening the terminal, the underlying curses library may cause the interpreter to exit. */
 
 	public static function is_term_resized(nlines:Int, ncols:Int):Bool;
@@ -126,13 +140,13 @@ import python.Tuple3;
 	public static function napms(ms:Int):Void;
 	/* Sleep for ms milliseconds. */
 
-	public static function newpad(nlines:Int, ncols:Int):Window.g;
+	public static function newpad(nlines:Int, ncols:Int):Window;
 	/* Create and return a pointer to a new pad data structure with the given number of lines and columns. A pad is returned as a window object. */
 
 	/* A pad is like a window, except that it is not restricted by the screen size, and is not necessarily associated with a particular part of the screen. Pads can be used when a large window is needed, and only a part of the window will be on the screen at one time. Automatic refreshes of pads (such as from scrolling or echoing of input) do not occur. The refresh() and noutrefresh() methods of a pad require 6 arguments to specify the part of the pad to be displayed and the location on the screen to be used for the display. The arguments are pminrow, pmincol, sminrow, smincol, smaxrow, smaxcol; the p arguments refer to the upper left corner of the pad region to be displayed and the s arguments define a clipping box on the screen within which the pad region is to be displayed. */
 
-	@:overload(function(nlines:Int, ncols:Int, begin_y:Int, begin_x:Int):Window.g)
-	public static function newwin(nlines:Int, ncols:Int):Window.g;
+	@:overload(function(nlines:Int, ncols:Int, begin_y:Int, begin_x:Int):Window{})
+	public static function newwin(nlines:Int, ncols:Int):Window;
 	/* Return a new window, whose left-upper corner is at (begin_y, begin_x), and whose height/width is nlines/ncols. */
 	/* By default, the window will extend from the specified position to the lower right corner of the screen. */
 
@@ -154,16 +168,16 @@ import python.Tuple3;
 	public static function noraw():Void;
 	/* Leave raw mode. Return to normal “cooked” mode with line buffering. */
 
-	public static function pair_content(pair_number:Int):Tuple2<Int,Int>
+	public static function pair_content(pair_number:Int):Tuple2<Int,Int>;
 	/* Return a tuple (fg, bg) containing the colors for the requested color pair. The value of pair_number must be between 1 and COLOR_PAIRS - 1. */
 
 	public static function pair_number(attr:Int):Int;
 	/* Return the number of the color-pair set by the attribute value attr. color_pair() is the counterpart to this function. */
 
-	public static function putp(string:String)
+	public static function putp(string:String):Void;
 	/* Equivalent to tputs(str, 1, putchar); emit the value of a specified terminfo capability for the current terminal. Note that the output of putp() always goes to standard output. */
 
-	public static function qiflush([flag:Bool=True):Void;
+	public static function qiflush(?flag:Bool=True):Void;
 	/* If flag is False, the effect is the same as calling noqiflush(). If flag is True, or no argument is provided, the queues will be flushed when these control characters are read. */
 
 	public static function raw():Void;
@@ -246,7 +260,7 @@ import python.Tuple3;
 	public static function use_default_colors():Void;
 	/* Allow use of default values for colors on terminals supporting this feature. Use this to support transparency in your application. The default color is assigned to the color number -1. After calling this function, init_pair(x, curses.COLOR_RED, -1) initializes, for instance, color pair x to a red foreground color on the default background. */
 
-	public static function wrapper(func:Window.g->Array<Dynamic>->Void, xs:Array<Dynamic>):Void;
+	public static function wrapper(func:Window->Array<Dynamic>->Void, xs:Array<Dynamic>):Void;
 	/* Initialize curses and call another callable object, func, which should be the rest of your curses-using application. If the application raises an exception, this function will restore the terminal to a sane state before re-raising the exception and generating a traceback. The callable object func is then passed the main window ‘stdscr’ as its first argument, followed by any other arguments passed to wrapper(). Before calling func, wrapper() turns on cbreak mode, turns off echo, enables the terminal keypad, and initializes colors if the terminal has color support. On exit (whether normally or by exception) it restores cooked mode, turns on echo, and disables the terminal keypad. */
 		
 }

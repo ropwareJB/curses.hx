@@ -1,24 +1,27 @@
-package curses;
+package curses.py;
+
+import python.Tuple;
 
 @:enum abstract YESBOOL(Int) to Int{
 	var YES = 1;
 	var NO = 0;
 }
 
+@:pythonImport("curses")
 @:native("curses.Window")
 @:final extern class Window{
 
-	@:overload(function(ch:Int, ?attr:Int):Void)
+	@:overload(function(ch:Int, ?attr:Int):Void{})
 	public function addch(y:Int, x:Int, ch:Int, ?attr:Int):Void;
 	/* Note A character means a C character (an ASCII code), rather than a Python character (a string of length 1). (This note is true whenever the documentation mentions a character.) The built-in ord() is handy for conveying strings to codes. */
 	/* Paint character ch at (y, x) with attributes attr, overwriting any character previously painter at that location. By default, the character position and attributes are the current settings for the window object. */
 
-	@:overload(function(str:String, n:Int, ?attr:Int):Void)
-	public function addnstr(y:Int, x:Int, str:String, n:Int, attr:Int):Void
+	@:overload(function(str:String, n:Int, ?attr:Int):Void{})
+	public function addnstr(y:Int, x:Int, str:String, n:Int, attr:Int):Void;
 	/* Paint at most n characters of the string str at (y, x) with attributes attr, overwriting anything previously on the display. */
 
-	@:overload(function(str:String, attr:Int):Void)
-	public function addstr(y:Int, x:Int, str:String, ?attr:Int):Void;
+	@:overload(function(y:Int, x:Int, str:String, ?attr:Int):Void{})
+	public function addstr(str:String, attr:Int):Void;
 	/* Paint the string str at (y, x) with attributes attr, overwriting anything previously on the display. */
 
 	public function attroff(attr:Int):Void;
@@ -52,13 +55,13 @@ package curses;
 	bl	Bottom-left corner	ACS_LLCORNER
 	br	Bottom-right corner	ACS_LRCORNER */
 
-	@:overload(function():Void);
+	@:overload(function():Void{})
 	public function box(vertch:Int, horch:Int):Void;
 	/* Similar to border(), but both ls and rs are vertch and both ts and bs are horch. The default corner characters are always used by this function. */
 
-	@:overload(function(attr:Int):Void);
-	@:overload(function(num:Int, attr:Int):Void);
-	@:overload(function(y:Int, x:Int, attr:Int):Void);
+	@:overload(function(attr:Int):Void{})
+	@:overload(function(num:Int, attr:Int):Void{})
+	@:overload(function(y:Int, x:Int, attr:Int):Void{})
 	public function chgat(y:Int, x:Int, num:Int, attr:Int):Void;
 	/* Set the attributes of num characters at the current cursor position, or at position (y, x) if supplied. If no value of num is given or num = -1, the attribute will be set on all the characters to the end of the line. This function does not move the cursor. The changed line will be touched using the touchline() method so that the contents will be redisplayed by the next window refresh. */
 
@@ -83,7 +86,7 @@ package curses;
 	public function deleteln():Void;
 	/* Delete the line under the cursor. All following lines are moved up by one line. */
 
-	@:overload(function(begin_y, begin_x):Window)
+	@:overload(function(begin_y:Int, begin_x:Int):Window{})
 	public function derwin(nlines:Int, ncols:Int, begin_y:Int, begin_x:Int):Window;
 	/* An abbreviation for “derive window”, derwin() is the same as calling subwin(), except that begin_y and begin_x are relative to the origin of the window, rather than relative to the entire screen. Return a window object for the derived window. */
 
@@ -103,7 +106,7 @@ package curses;
 	public function getbegyx():Tuple2<Int,Int>;
 	/* Return a tuple (y, x) of co-ordinates of upper-left corner. */
 
-	public function getbkgd():Tuple<Int,Int>;
+	public function getbkgd():Tuple2<Int,Int>;
 	/* Return the given window’s current background character/attribute pair. */
 
 	public function getch(y:Int, x:Int):Int;
@@ -113,7 +116,7 @@ package curses;
 	/* Get a wide character. Return a character for most keys, or an integer for function keys, keypad keys, and other special keys. */
 	/* New in version 3.3. */
 
-	public function getkey(y:Int, x:Int):
+	public function getkey(y:Int, x:Int):String;
 	/* Get a character, returning a string instead of an integer, as getch() does. Function keys, keypad keys and other special keys return a multibyte string containing the key name. In no-delay mode, an exception is raised if there is no input. */
 
 	public function getmaxyx():Tuple2<Int,Int>;
@@ -128,7 +131,7 @@ package curses;
 	public function getyx():Tuple2<Int,Int>;
 	/* Return a tuple (y, x) of current cursor position relative to the window’s upper-left corner. */
 
-	@:overload(function(ch:Int, n:Int):Void)
+	@:overload(function(ch:Int, n:Int):Void{})
 	public function hline(y:Int, x:Int, ch:Int, n:Int):Void;
 	/* Display a horizontal line starting at (y, x) with length n consisting of the character ch. */
 
@@ -144,7 +147,7 @@ package curses;
 	public function inch(y:Int, x:Int):Int;
 	/* Return the character at the given position in the window. The bottom 8 bits are the character proper, and upper bits are the attributes. */
 
-	@:overload(function(ch:Int, attr:Int):Void;
+	@:overload(function(ch:Int, attr:Int):Void{})
 	public function insch(y:Int, x:Int, ch:Int, attr:Int):Void;
 	/* Paint character ch at (y, x) with attributes attr, moving the line from position x right by one character. */
 
@@ -154,15 +157,15 @@ package curses;
 	public function insertln():Void;
 	/* Insert a blank line under the cursor. All following lines are moved down by one line. */
 
-	@:overload(function(str:String, n:Int, ?attr:Int):Void)
-	public function insnstr(y:Int, x:Int, str:String, n:Int, ?attr:Int):Void
+	@:overload(function(str:String, n:Int, ?attr:Int):Void{})
+	public function insnstr(y:Int, x:Int, str:String, n:Int, ?attr:Int):Void;
 	/* Insert a character string (as many characters as will fit on the line) before the character under the cursor, up to n characters. If n is zero or negative, the entire string is inserted. All characters to the right of the cursor are shifted right, with the rightmost characters on the line being lost. The cursor position does not change (after moving to y, x, if specified). */
 
-	@:overload(function(str:String, ?attr:Int):Void)
+	@:overload(function(str:String, ?attr:Int):Void{})
 	public function insstr(y:Int, x:Int, str:String, ?attr:Int):Void;
 	/* Insert a character string (as many characters as will fit on the line) before the character under the cursor. All characters to the right of the cursor are shifted right, with the rightmost characters on the line being lost. The cursor position does not change (after moving to y, x, if specified). */
 
-	@:overload(function instr(n:Int):String)
+	@:overload(function(n:Int):String{})
 	public function instr(y:Int, x:Int, n:Int):String;
 	/* Return a string of characters, extracted from the window starting at the current cursor position, or at y, x if specified. Attributes are stripped from the characters. If n is specified, instr() returns a string at most n characters long (exclusive of the trailing NUL). */
 
@@ -198,12 +201,12 @@ package curses;
 	public function noutrefresh():Void;
 	/* Mark for refresh but wait. This function updates the data structure representing the desired state of the window, but does not force an update of the physical screen. To accomplish that, call doupdate(). */
 
-	@:overload(function(destwin:Window):Void);
-	public function overlay(destwin:Window, sminrow:Int, smincol:Int, dminrow,:Int dmincol:Int, dmaxrow:Int, dmaxcol:Int):Void;
+	@:overload(function(destwin:Window):Void{})
+	public function overlay(destwin:Window, sminrow:Int, smincol:Int, dminrow:Int, dmincol:Int, dmaxrow:Int, dmaxcol:Int):Void;
 	/* Overlay the window on top of destwin. The windows need not be the same size, only the overlapping region is copied. This copy is non-destructive, which means that the current background character does not overwrite the old contents of destwin. */
 	/* To get fine-grained control over the copied region, the second form of overlay() can be used. sminrow and smincol are the upper-left coordinates of the source window, and the other variables mark a rectangle in the destination window. */
 
-	@:overload(function(destwin:Window):Void)
+	@:overload(function(destwin:Window):Void{})
 	public function overwrite(destwin:Window, sminrow:Int, smincol:Int, dminrow:Int, dmincol:Int, dmaxrow:Int, dmaxcol:Int):Void;
 	/* Overwrite the window on top of destwin. The windows need not be the same size, in which case only the overlapping region is copied. This copy is destructive, which means that the current background character overwrites the old contents of destwin. */
 
@@ -218,7 +221,7 @@ package curses;
 	public function redrawwin():Void;
 	/* Touch the entire window, causing it to be completely redrawn on the next refresh() call. */
 
-	@:overload(function():Void);
+	@:overload(function():Void{})
 	public function refresh(pminrow:Int, pmincol:Int, sminrow:Int, smincol:Int, smaxrow:Int, smaxcol:Int):Void;
 	/* Update the display immediately (sync actual screen with previous drawing/deleting methods). */
 	/* The 6 optional arguments can only be specified when the window is a pad created with newpad(). The additional parameters are needed to indicate what part of the pad and screen are involved. pminrow and pmincol specify the upper left-hand corner of the rectangle to be displayed in the pad. sminrow, smincol, smaxrow, and smaxcol specify the edges of the rectangle to be displayed on the screen. The lower right-hand corner of the rectangle to be displayed in the pad is calculated from the screen coordinates, since the rectangles must be the same size. Both rectangles must be entirely contained within their respective structures. Negative values of pminrow, pmincol, sminrow, or smincol are treated as if they were zero. */
@@ -241,11 +244,11 @@ package curses;
 	public function standout():Void;
 	/* Turn on attribute A_STANDOUT. */
 
-	@:overload(function(begin_y, begin_x):Window)
+	@:overload(function(begin_y:Int, begin_x:Int):Window{})
 	public function subpad(nlines:Int, ncols:Int, begin_y:Int, begin_x:Int):Window;
 	/* Return a sub-window, whose upper-left corner is at (begin_y, begin_x), and whose width/height is ncols/nlines. */
 
-	@:overload(function(begin_y:Int, begin_x:Int):Window)
+	@:overload(function(begin_y:Int, begin_x:Int):Window{})
 	public function subwin(nlines:Int, ncols:Int, begin_y:Int, begin_x:Int):Window;
 	/* Return a sub-window, whose upper-left corner is at (begin_y, begin_x), and whose width/height is ncols/nlines. */
 	/* By default, the sub-window will extend from the specified position to the lower right corner of the window. */
@@ -271,7 +274,7 @@ package curses;
 	public function untouchwin():Void;
 	/* Mark all lines in the window as unchanged since the last call to refresh(). */
 
-	@:overload(function(ch:Int, n:Int):Void)
+	@:overload(function(ch:Int, n:Int):Void{})
 	public function vline(y:Int, x:Int, ch:Int, n:Int):Void;
 	/* Display a vertical line starting at (y, x) with length n consisting of the character ch. */
 

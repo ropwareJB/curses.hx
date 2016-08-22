@@ -1,6 +1,7 @@
-package curses;
+package curses.py;
 
 @:native("curses.textpad")
+@:pythonImport("curses")
 @:final extern class Rectangle{
 
 	public static function rectangle(win:Window, uly:Int, ulx:Int, lry:Int, lrx:Int):Void;
@@ -49,6 +50,7 @@ package curses;
 
 
 @:native("curses.textpad.Textbox")
+@:pythonImport("curses")
 @:final extern class Textbox{
 
 	public function new(win:Window);
