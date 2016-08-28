@@ -2,7 +2,7 @@
 ### Curses.hx  
 A library for interfacing with Curses APIs in various languages via Haxe. So you can make pretty terminal applications.    
 
-Curses is a library for writing GUI-like interfaces in terminal (killer) applications.  
+Curses is a library for writing GUI-like interfaces in terminal applications.  
 
 **This repository is very new, so not many targets are currently supported**  
 
@@ -20,7 +20,7 @@ If you have an issue relating to usage of the library, please check the samples 
 
 #### TODO List  
 + Java / JCurses  
++ Cpp
 + Language-independent middleman  
 + Check UniCurses
 + More samples
-
