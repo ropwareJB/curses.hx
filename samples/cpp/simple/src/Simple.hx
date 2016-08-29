@@ -1,7 +1,7 @@
 package;
 
-import curses.c.Curses;
-import curses.c.Window;
+import curses.cpp.Curses;
+import curses.cpp.Window;
 
 class Simple{
 
