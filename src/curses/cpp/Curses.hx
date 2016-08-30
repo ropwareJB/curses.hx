@@ -1,5 +1,8 @@
 package curses.cpp;
 
+import cpp.Char;
+import cpp.Reference;
+
 @:include("curses.h") 
 @:buildXml("
 <target id=\"haxe\">
@@ -54,7 +57,7 @@ package curses.cpp;
 	//void _nc_freeall(void);
 	//void _nc_free_and_exit(int);*/
 
- ///* curs_trace(3X)**/
+ /* curs_trace(3X)**/
 	//void _tracef(const char *format, ...);
 	//void _tracedump(const char *label, WINDOW *win);
 	//char *_traceattr(attr_t attr);
@@ -603,37 +606,40 @@ package curses.cpp;
 	@:native("") static public function scr_init(const char *filename):STATE;
 	@:native("") static public function scr_set(const char *filename):STATE;
 
-/*scrl                    curs_scroll(3X)*/
-/*scroll                  curs_scroll(3X)*/
-/*slk_attr                curs_slk(3X)**/
-/*slk_attr_off            curs_slk(3X)*/
-/*slk_attr_on             curs_slk(3X)*/
-/*slk_attr_set            curs_slk(3X)*/
-/*slk_attroff             curs_slk(3X)*/
-/*slk_attron              curs_slk(3X)*/
-/*slk_attrset             curs_slk(3X)*/
-/*slk_clear               curs_slk(3X)*/
-/*slk_color               curs_slk(3X)*/
-/*slk_init                curs_slk(3X)*/
-/*slk_label               curs_slk(3X)*/
-/*slk_noutrefresh         curs_slk(3X)*/
-/*slk_refresh             curs_slk(3X)*/
-/*slk_restore             curs_slk(3X)*/
-/*slk_set                 curs_slk(3X)*/
-/*slk_touch               curs_slk(3X)*/
-/*tgetent                 curs_termcap(3X)*/
-/*tgetflag                curs_termcap(3X)*/
-/*tgetnum                 curs_termcap(3X)*/
-/*tgetstr                 curs_termcap(3X)*/
-/*tgoto                   curs_termcap(3X)*/
-/*tputs                   curs_termcap(3X)*/
-/*trace                   curs_trace(3X)**/
-/*use_default_colors      default_colors(3X)**/
-/*use_legacy_coding       legacy_coding(3X)**/
-/**/
-/**/
-/*wresize                 wresize(3X)**/
-/*wscrl                   curs_scroll(3X)*/
+	/* curs_scroll(3X)*/
+	@:native("") static public function scroll(WINDOW *win):STATE;
+	@:native("") static public function scrl(int n):STATE;
+	@:native("") static public function wscrl(WINDOW *win, int n):STATE;
+
+	/* curs_slk(3X)**/
+	@:native("") static public function slk_init(int fmt):STATE;
+	@:native("") static public function slk_set(int labnum, const char *label, int fmt):STATE;
+	@:native("") static public function slk_refresh(void):STATE;
+	@:native("") static public function slk_noutrefresh(void):STATE;
+       char *slk_label(int labnum);
+	@:native("") static public function slk_clear(void):STATE;
+	@:native("") static public function slk_restore(void):STATE;
+	@:native("") static public function slk_touch(void):STATE;
+	@:native("") static public function slk_attron(const chtype attrs):STATE;
+	@:native("") static public function slk_attroff(const chtype attrs):STATE;
+	@:native("") static public function slk_attrset(const chtype attrs):STATE;
+	@:native("") static public function slk_attr_on(attr_t attrs, void* opts):STATE;
+	@:native("") static public function slk_attr_off(const attr_t attrs, void * opts):STATE;
+	@:native("") static public function slk_attr_set(const attr_t attrs, short color_pair, void* opts):STATE;
+       attr_t slk_attr(void);
+	@:native("") static public function slk_color(short color_pair):STATE;
+	@:native("") static public function slk_wset(int labnum, const wchar_t *label, int fmt):STATE;
+
+	/* curs_termcap(3X)*/
+	@:native("") static public function tgetent(char *bp, const char *name):STATE;
+	@:native("") static public function tgetflag(char *id):STATE;
+	@:native("") static public function tgetnum(char *id):STATE;
+       char *tgetstr(char *id, char **area);
+       char *tgoto(const char *cap, int col, int row);
+	@:native("") static public function tputs(const char *str, int affcnt, int (*putc)(int)):STATE;
+
+	/* wresize(3X)**/
+	@:native("") static public function wresize(WINDOW *win, int lines, int columns):STATE;
 
 }
 
