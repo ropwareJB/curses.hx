@@ -10,9 +10,9 @@ class Simple{
 		var stdscr:Pointer<Window> = Curses.initscr();
 		Curses.start_color();
 
-		Curses.init_pair(1, COLOR_YELLOW, COLOR_RED);
-
-		untyped __cpp__("color_set(1, 0)");
+		Curses.init_pair(1, COLOR_RED, COLOR_WHITE);
+		Curses.bkgd(Curses.color_pair(1));
+		Curses.color_set(1, Nothing);
 
 		Curses.mvaddstr(13, 33, "This is a test (with colour!) :)");
 		Curses.refresh();

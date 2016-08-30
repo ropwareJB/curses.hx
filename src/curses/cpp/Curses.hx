@@ -4,6 +4,12 @@ import cpp.Char;
 import cpp.Pointer;
 import cpp.Int32 as Short;
 
+typedef Attrs = Int;// attr_t
+typedef Null = Pointer<cpp.Void>;// void*, but param should always be 0.
+typedef CHType = Int;
+
+@:enum abstract CONSTS(Null) to Null{ var Nothing = null; }
+
 @:include("curses.h") 
 @:buildXml("
 <target id=\"haxe\">
@@ -11,7 +17,9 @@ import cpp.Int32 as Short;
 </target>
 ")
 @:final extern class Curses{
-	
+
+	@:native("COLOR_PAIR") static public function color_pair(n:Int):Int;
+
 	@:native("initscr") static public function initscr():Pointer<Window>;
 	@:native("mvaddstr") static public function mvaddstr(y:Int,x:Int,str:String):Void;
 	@:native("refresh") static public function refresh():Void;
@@ -28,30 +36,30 @@ import cpp.Int32 as Short;
 	@:native("pair_content") static public function pair_content(pair:Short, f:Pointer<Short>, b:Pointer<Short>):STATE;
 
 	/* curs_attr */
-	@:native("") static public function attroff(attrs:Int):STATE;
-	@:native("") static public function wattroff(win:Pointer<Window>, attrs:Int):STATE;
-	@:native("") static public function attron(attrs:Int):STATE;
-	@:native("") static public function wattron(win:Pointer<Window>, attrs:Int):STATE;
-	@:native("") static public function attrset(attrs:Int):STATE;
-	@:native("") static public function wattrset(win:Pointer<Window>, attrs:Int):STATE;
-	@:native("") static public function color_set(color_pair_number:Short, opts:Int):STATE; // opts must be 0 or NULL
-	//@:native("") static public function wcolor_set(win:Pointer<Window>, color_pair_number:Short, void* opts):STATE;
-	@:native("") static public function standend():STATE;
-	@:native("") static public function wstandend(win:Pointer<Window>):STATE;
-	@:native("") static public function standout():STATE;
-	@:native("") static public function wstandout(win:Pointer<Window>):STATE;
-	@:native("") static public function attr_get(attr_t *attrs, pair:Pointer<Short>, void *opts):STATE;
-	@:native("") static public function wattr_get(win:Pointer<Window>, attr_t *attrs, pair:Pointer<Short>, void *opts):STATE;
-	@:native("") static public function attr_off(attr_t attrs, void *opts):STATE;
-	@:native("") static public function wattr_off(win:Pointer<Window>, attr_t attrs, void *opts):STATE;
-	@:native("") static public function attr_on(attr_t attrs, void *opts):STATE;
-	@:native("") static public function wattr_on(win:Pointer<Window>, attr_t attrs, void *opts):STATE;
-	@:native("") static public function attr_set(attr_t attrs, pair:Short, void *opts):STATE;
-	@:native("") static public function wattr_set(win:Pointer<Window>, attr_t attrs, pair:Short, void *opts):STATE;
-	@:native("") static public function chgat(n:Int, attr_t attr, color:Short, const void *opts):STATE;
-	@:native("") static public function wchgat(win:Pointer<Window>, n:Int, attr_t attr, color:Short, const void *opts):STATE;
-	@:native("") static public function mvchgat(y:Int, x:Int, n:Int, attr_t attr, color:Short, const void *opts):STATE;
-	@:native("") static public function mvwchgat(win:Pointer<Window>, y:Int, x:Int, n:Int, attr_t attr, color:Short, const void *opts):STATE;
+	@:native("attroff") static public function attroff(attrs:Int):STATE;
+	@:native("wattroff") static public function wattroff(win:Pointer<Window>, attrs:Attrs):STATE;
+	@:native("attron") static public function attron(attrs:Int):STATE;
+	@:native("wattron") static public function wattron(win:Pointer<Window>, attrs:Attrs):STATE;
+	@:native("attrset") static public function attrset(attrs:Int):STATE;
+	@:native("wattrset") static public function wattrset(win:Pointer<Window>, attrs:Attrs):STATE;
+	@:native("color_set") static public function color_set(color_pair_number:Short, opts:Null):STATE; // opts must be 0 or NULL
+	@:native("wcolor_set") static public function wcolor_set(win:Pointer<Window>, color_pair_number:Short, opts:Null):STATE;
+	@:native("standend") static public function standend():STATE;
+	@:native("wstandend") static public function wstandend(win:Pointer<Window>):STATE;
+	@:native("standout") static public function standout():STATE;
+	@:native("wstandout") static public function wstandout(win:Pointer<Window>):STATE;
+	@:native("attr_get") static public function attr_get(attrs:Pointer<Attrs>, pair:Pointer<Short>, opts:Null):STATE;
+	@:native("wattr_get") static public function wattr_get(win:Pointer<Window>, attrs:Pointer<Attrs>, pair:Pointer<Short>, opts:Null):STATE;
+	@:native("attr_off") static public function attr_off(attrs:Attrs, opts:Null):STATE;
+	@:native("wattr_off") static public function wattr_off(win:Pointer<Window>, attrs:Attrs, opts:Null):STATE;
+	@:native("attr_on") static public function attr_on(attrs:Attrs, opts:Null):STATE;
+	@:native("wattr_on") static public function wattr_on(win:Pointer<Window>, attrs:Attrs, opts:Null):STATE;
+	@:native("attr_set") static public function attr_set(attrs:Attrs, pair:Short, opts:Null):STATE;
+	@:native("wattr_set") static public function wattr_set(win:Pointer<Window>, attrs:Attrs, pair:Short, opts:Null):STATE;
+	@:native("chgat") static public function chgat(n:Int, attr:Attrs, color:Short, opts:Null):STATE;
+	@:native("wchgat") static public function wchgat(win:Pointer<Window>, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
+	@:native("mvchgat") static public function mvchgat(y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
+	@:native("mvwchgat") static public function mvwchgat(win:Pointer<Window>, y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
 //
 //	
 // /* curs_memleaks(3X)*/
@@ -61,7 +69,7 @@ import cpp.Int32 as Short;
 // /* curs_trace(3X)**/
 //	//void _tracef(const char *format, ...);
 //	//void _tracedump(const char *label, WINDOW *win);
-//	//char *_traceattr(attr_t attr);
+//	//char *_traceattr(attr:Attrs);
 //	//char *_traceattr2(int buffer, chtype ch);
 //	//char *_nc_tracebits();
 //	//char * _tracecchar_t(const cchar_t *string);
@@ -89,14 +97,14 @@ import cpp.Int32 as Short;
 //	@:native("") static public function wechochar(WINDOW *win, const chtype ch):STATE;
 //
 // /* curs_addchstr(3X)*/
-//	@:native("") static public function addchstr(const chtype *chstr):STATE;
-//	@:native("") static public function addchnstr(const chtype *chstr, int n):STATE;
-//	@:native("") static public function waddchstr(WINDOW *win, const chtype *chstr):STATE;
-//	@:native("") static public function waddchnstr(WINDOW *win, const chtype *chstr, int n):STATE;
-//	@:native("") static public function mvaddchstr(int y, int x, const chtype *chstr):STATE;
-//	@:native("") static public function mvaddchnstr(int y, int x, const chtype *chstr, int n):STATE;
-//	@:native("") static public function mvwaddchstr(WINDOW *win, int y, int x, const chtype *chstr):STATE;
-//	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chtype *chstr, int n):STATE;
+//	@:native("") static public function addchstr(const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function addchnstr(const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function waddchstr(WINDOW *win, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function waddchnstr(WINDOW *win, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function mvaddchstr(int y, int x, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function mvaddchnstr(int y, int x, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function mvwaddchstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>, int n):STATE;
 //
 // /* curs_addstr(3X)*/
 //	@:native("") static public function addstr(const char *str):STATE;
@@ -131,7 +139,7 @@ import cpp.Int32 as Short;
 //		 char killchar();
 //	@:native("") static public function killwchar(wchar_t *ch):STATE;
 //		 char *longname();
-//		 attr_t term_attrs();
+//		 term_attrs:Attrs();
 //		 chtype termattrs();
 //		 char *termname();
 //
@@ -139,12 +147,12 @@ import cpp.Int32 as Short;
 //	@:native("") static public function beep():STATE;
 //	@:native("") static public function flash():STATE;
 //
-// /* curs_bkgd(3X)*/
-//       void bkgdset(chtype ch);
-//       void wbkgdset(WINDOW *win, chtype ch);
-//	@:native("") static public function bkgd(chtype ch):STATE;
-//	@:native("") static public function wbkgd(WINDOW *win, chtype ch):STATE;
-//       chtype getbkgd(WINDOW *win);
+ /* curs_bkgd(3X)*/
+  @:native("bkgdset") static public function bkgdset(ch:CHType):Void;
+  @:native("wbkgdset") static public function wbkgdset(win:Pointer<Window>, ch:CHType):Void;
+	@:native("bkgd") static public function bkgd(ch:CHType):STATE;
+	@:native("wbkgd") static public function wbkgd(win:Pointer<Window>, ch:CHType):STATE;
+  @:native("getbkgd") static public function getbkgd(win:Pointer<Window>):CHType;
 //
 // /* curs_bkgrnd(3X)*/
 //	@:native("") static public function bkgrnd( const cchar_t *wch):STATE;
@@ -269,8 +277,8 @@ import cpp.Int32 as Short;
 //	@:native("") static public function putp(const char *str):STATE;
 //	@:native("") static public function vidputs(chtype attrs, int (*putc)(int)):STATE;
 //	@:native("") static public function vidattr(chtype attrs):STATE;
-//	@:native("") static public function vid_puts(attr_t attrs, pair:Short, void *opts, int (*putc)(int)):STATE;
-//	@:native("") static public function vid_attr(attr_t attrs, pair:Short, void *opts):STATE;
+//	@:native("") static public function vid_puts(attrs:Attrs, pair:Short, void *opts, int (*putc)(int)):STATE;
+//	@:native("") static public function vid_attr(attrs:Attrs, pair:Short, void *opts):STATE;
 //	@:native("") static public function mvcur(int oldrow, int oldcol, int newrow, int newcol):STATE;
 //	@:native("") static public function tigetflag(char *capname):STATE;
 //	@:native("") static public function tigetnum(char *capname):STATE;
@@ -376,13 +384,13 @@ import cpp.Int32 as Short;
 //	 int getcchar(
 //					 const cchar_t *wcval,
 //					 wchar_t *wch,
-//					 attr_t *attrs,
+//					 attrs:Pointer<Attrs>,
 //					 color_pair:Pointer<Short>,
 //					 void *opts );
 //	 int setcchar(
 //					 cchar_t *wcval,
 //					 const wchar_t *wch,
-//					 const attr_t attrs,
+//					 const attrs:Attrs,
 //					 color_pair:Short,
 //					 void *opts );
 //
@@ -448,14 +456,14 @@ import cpp.Int32 as Short;
 //       chtype mvwinch(WINDOW *win, int y, int x);
 //
 //	/* curs_inchstr(3X)*/
-//	@:native("") static public function inchstr(chtype *chstr):Int;
-//	@:native("") static public function inchnstr(chtype *chstr, int n):Int;
-//	@:native("") static public function winchstr(WINDOW *win, chtype *chstr):Int;
-//	@:native("") static public function winchnstr(WINDOW *win, chtype *chstr, int n):Int;
-//	@:native("") static public function mvinchstr(int y, int x, chtype *chstr):Int;
-//	@:native("") static public function mvinchnstr(int y, int x, chtype *chstr, int n):Int;
-//	@:native("") static public function mvwinchstr(WINDOW *win, int y, int x, chtype *chstr):Int;
-//	@:native("") static public function mvwinchnstr(WINDOW *win, int y, int x, chtype *chstr, int n):Int;
+//	@:native("") static public function inchstr(chstr:Pointer<CHType>):Int;
+//	@:native("") static public function inchnstr(chstr:Pointer<CHType>, int n):Int;
+//	@:native("") static public function winchstr(WINDOW *win, chstr:Pointer<CHType>):Int;
+//	@:native("") static public function winchnstr(WINDOW *win, chstr:Pointer<CHType>, int n):Int;
+//	@:native("") static public function mvinchstr(int y, int x, chstr:Pointer<CHType>):Int;
+//	@:native("") static public function mvinchnstr(int y, int x, chstr:Pointer<CHType>, int n):Int;
+//	@:native("") static public function mvwinchstr(WINDOW *win, int y, int x, chstr:Pointer<CHType>):Int;
+//	@:native("") static public function mvwinchnstr(WINDOW *win, int y, int x, chstr:Pointer<CHType>, int n):Int;
 //
 //	/* curs_instr(3X)*/
 //	@:native("") static public function instr(char *str):Int;
@@ -565,14 +573,14 @@ import cpp.Int32 as Short;
 //	@:native("") static public function mvwadd_wchnstr(WINDOW *win, int y, int x, const cchar_t *wchstr, int n):STATE;
 //
 //	/* curs_addchstr(3X)*/
-//	@:native("") static public function addchstr(const chtype *chstr):STATE;
-//	@:native("") static public function addchnstr(const chtype *chstr, int n):STATE;
-//	@:native("") static public function waddchstr(WINDOW *win, const chtype *chstr):STATE;
-//	@:native("") static public function waddchnstr(WINDOW *win, const chtype *chstr, int n):STATE;
-//	@:native("") static public function mvaddchstr(int y, int x, const chtype *chstr):STATE;
-//	@:native("") static public function mvaddchnstr(int y, int x, const chtype *chstr, int n):STATE;
-//	@:native("") static public function mvwaddchstr(WINDOW *win, int y, int x, const chtype *chstr):STATE;
-//	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chtype *chstr, int n):STATE;
+//	@:native("") static public function addchstr(const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function addchnstr(const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function waddchstr(WINDOW *win, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function waddchnstr(WINDOW *win, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function mvaddchstr(int y, int x, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function mvaddchnstr(int y, int x, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function mvwaddchstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>, int n):STATE;
 //
 //	/* curs_printw(3X)*/
 //	@:native("") static public function printw(const char *fmt, ...):STATE;
@@ -624,10 +632,10 @@ import cpp.Int32 as Short;
 //	@:native("") static public function slk_attron(const chtype attrs):STATE;
 //	@:native("") static public function slk_attroff(const chtype attrs):STATE;
 //	@:native("") static public function slk_attrset(const chtype attrs):STATE;
-//	@:native("") static public function slk_attr_on(attr_t attrs, void* opts):STATE;
-//	@:native("") static public function slk_attr_off(const attr_t attrs, void * opts):STATE;
-//	@:native("") static public function slk_attr_set(const attr_t attrs, color_pair:Short, void* opts):STATE;
-//       attr_t slk_attr();
+//	@:native("") static public function slk_attr_on(attrs:Attrs, void* opts):STATE;
+//	@:native("") static public function slk_attr_off(const attrs:Attrs, void * opts):STATE;
+//	@:native("") static public function slk_attr_set(const attrs:Attrs, color_pair:Short, void* opts):STATE;
+//       slk_attr:Attrs();
 //	@:native("") static public function slk_color(color_pair:Short):STATE;
 //	@:native("") static public function slk_wset(int labnum, const wchar_t *label, int fmt):STATE;
 //
