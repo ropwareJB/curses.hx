@@ -2,11 +2,14 @@ package curses.cpp;
 
 import cpp.Char;
 import cpp.Pointer;
+import cpp.UInt32;
 import cpp.Int32 as Short;
+import haxe.extern.Rest; 
 
-typedef Attrs = Int;// attr_t
-typedef Null = Pointer<cpp.Void>;// void*, but param should always be 0.
-typedef CHType = Int;
+typedef Attrs = Int; 			// attr_t
+typedef Null = Pointer<cpp.Void>; // void*, but should always be 0.
+typedef CHType = Int; 		// chtype_t
+typedef CChar_t = Int; 		// cchar_t
 
 @:enum abstract CONSTS(Null) to Null{ var Nothing = null; }
 
@@ -42,7 +45,7 @@ typedef CHType = Int;
 	@:native("wattron") static public function wattron(win:Pointer<Window>, attrs:Attrs):STATE;
 	@:native("attrset") static public function attrset(attrs:Int):STATE;
 	@:native("wattrset") static public function wattrset(win:Pointer<Window>, attrs:Attrs):STATE;
-	@:native("color_set") static public function color_set(color_pair_number:Short, opts:Null):STATE; // opts must be 0 or NULL
+	@:native("color_set") static public function color_set(color_pair_number:Short, opts:Null):STATE;
 	@:native("wcolor_set") static public function wcolor_set(win:Pointer<Window>, color_pair_number:Short, opts:Null):STATE;
 	@:native("standend") static public function standend():STATE;
 	@:native("wstandend") static public function wstandend(win:Pointer<Window>):STATE;
@@ -60,33 +63,33 @@ typedef CHType = Int;
 	@:native("wchgat") static public function wchgat(win:Pointer<Window>, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
 	@:native("mvchgat") static public function mvchgat(y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
 	@:native("mvwchgat") static public function mvwchgat(win:Pointer<Window>, y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
-//
-//	
-// /* curs_memleaks(3X)*/
-//	//void _nc_freeall();
-//	//void _nc_free_and_exit(int);*/
-//
-// /* curs_trace(3X)**/
-//	//void _tracef(const char *format, ...);
-//	//void _tracedump(const char *label, WINDOW *win);
-//	//char *_traceattr(attr:Attrs);
-//	//char *_traceattr2(int buffer, chtype ch);
-//	//char *_nc_tracebits();
-//	//char * _tracecchar_t(const cchar_t *string);
-//	//char * _tracecchar_t2(int buffer, const cchar_t *string);
-//	//char *_tracechar(int ch);
-//	//char *_tracechtype(chtype ch);
-//	//char *_tracechtype2(int buffer, chtype ch);
-//	//char *_tracemouse(const MEVENT *event);
-//	//void trace(const unsigned int param);
-//
-// /* curs_add_wch(3X)*/
-//	@:native("") static public function add_wch( const cchar_t *wch ):STATE;
-//	@:native("") static public function wadd_wch( WINDOW *win, const cchar_t *wch ):STATE;
-//	@:native("") static public function mvadd_wch( int y, int x, const cchar_t *wch ):STATE;
-//	@:native("") static public function mvwadd_wch( WINDOW *win, int y, int x, const cchar_t *wch ):STATE;
-//	@:native("") static public function echo_wchar( const cchar_t *wch ):STATE;
-//	@:native("") static public function wecho_wchar( WINDOW *win, const cchar_t *wch ):STATE;
+
+	
+ /* curs_memleaks(3X)*/
+	@:native("_nc_freeall") static public function _nc_freeall():Void;
+	@:native("_nc_free_and_exit") static public function _nc_free_and_exit(int):Void;
+
+ /* curs_trace(3X)**/
+	@:native("_tracef") static public function _tracef(format:ConstPointer<Char>, vs:Rest<Dynamic>):Void;
+	@:native("_tracedump") static public function _tracedump(label:ConstPointer<Char>, WINDOW *win):Void;
+	@:native("_traceattr") static public function _traceattr(attr:Attrs):Pointer<Char>;
+	@:native("_traceattr2") static public function _traceattr2(buffer:Int, ch:CHType):Pointer<Char>;
+	@:native("_nc_tracebits") static public function _nc_tracebits():Pointer<Char>;
+	@:native(" _tracecchar_t") static public function  _tracecchar_t(string:ConstPointer<CChar_t>):Pointer<Char>;
+	@:native(" _tracecchar_t2") static public function  _tracecchar_t2(buffer:Int, string:ConstPointer<CChar_t>):Pointer<Char>;
+	@:native("_tracechar") static public function _tracechar(ch:Int):Pointer<Char>;
+	@:native("_tracechtype") static public function _tracechtype(ch:CHType):Pointer<Char>;
+	@:native("_tracechtype2") static public function _tracechtype2(buffer:Int, ch:CHType):Pointer<Char>;
+	@:native("_tracemouse") static public function _tracemouse(event:ConstrPointer<MEVENT>):Pointer<Char>;
+	@:native("trace") static public function _trace(param:TRACE_PARAM):Void;
+
+ /* curs_add_wch(3X)*/
+//	@:native("") static public function add_wch( wch:ConstPointer<CChar_t> ):STATE;
+//	@:native("") static public function wadd_wch( WINDOW *win, wch:ConstPointer<CChar_t> ):STATE;
+//	@:native("") static public function mvadd_wch( int y, int x, wch:ConstPointer<CChar_t> ):STATE;
+//	@:native("") static public function mvwadd_wch( WINDOW *win, int y, int x, wch:ConstPointer<CChar_t> ):STATE;
+//	@:native("") static public function echo_wchar( wch:ConstPointer<CChar_t> ):STATE;
+//	@:native("") static public function wecho_wchar( WINDOW *win, wch:ConstPointer<CChar_t> ):STATE;
 //
 // /* curs_addch(3X)*/
 //	@:native("") static public function addch(const chtype ch):STATE;
@@ -107,14 +110,14 @@ typedef CHType = Int;
 //	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>, int n):STATE;
 //
 // /* curs_addstr(3X)*/
-//	@:native("") static public function addstr(const char *str):STATE;
-//	@:native("") static public function addnstr(const char *str, int n):STATE;
-//	@:native("") static public function waddstr(WINDOW *win, const char *str):STATE;
-//	@:native("") static public function waddnstr(WINDOW *win, const char *str, int n):STATE;
-//	@:native("") static public function mvaddstr(int y, int x, const char *str):STATE;
-//	@:native("") static public function mvaddnstr(int y, int x, const char *str, int n):STATE;
-//	@:native("") static public function mvwaddstr(WINDOW *win, int y, int x, const char *str):STATE;
-//	@:native("") static public function mvwaddnstr(WINDOW *win, int y, int x, const char *str, int n):STATE;
+//	@:native("") static public function addstr(str:ConstPointer<Char>):STATE;
+//	@:native("") static public function addnstr(str:ConstPointer<Char>, int n):STATE;
+//	@:native("") static public function waddstr(WINDOW *win, str:ConstPointer<Char>):STATE;
+//	@:native("") static public function waddnstr(WINDOW *win, str:ConstPointer<Char>, int n):STATE;
+//	@:native("") static public function mvaddstr(int y, int x, str:ConstPointer<Char>):STATE;
+//	@:native("") static public function mvaddnstr(int y, int x, str:ConstPointer<Char>, int n):STATE;
+//	@:native("") static public function mvwaddstr(WINDOW *win, int y, int x, str:ConstPointer<Char>):STATE;
+//	@:native("") static public function mvwaddnstr(WINDOW *win, int y, int x, str:ConstPointer<Char>, int n):STATE;
 //
 // /* curs_addwstr(3X)*/
 //	@:native("") static public function addwstr(const wchar_t *wstr):STATE;
@@ -155,10 +158,10 @@ typedef CHType = Int;
   @:native("getbkgd") static public function getbkgd(win:Pointer<Window>):CHType;
 //
 // /* curs_bkgrnd(3X)*/
-//	@:native("") static public function bkgrnd( const cchar_t *wch):STATE;
-//	@:native("") static public function wbkgrnd( WINDOW *win, const cchar_t *wch):STATE;
-//       void bkgrndset(const cchar_t *wch );
-//       void wbkgrndset(WINDOW *win, const cchar_t *wch);
+//	@:native("") static public function bkgrnd( wch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function wbkgrnd( WINDOW *win, wch:ConstPointer<CChar_t>):STATE;
+//       void bkgrndset(wch:ConstPointer<CChar_t> );
+//       void wbkgrndset(WINDOW *win, wch:ConstPointer<CChar_t>);
 //	@:native("") static public function getbkgrnd(cchar_t *wch):STATE;
 //	@:native("") static public function wgetbkgrnd(WINDOW *win, cchar_t *wch):STATE;
 //
@@ -177,25 +180,25 @@ typedef CHType = Int;
 //
 // /* curs_border_set(3X)*/
 //	@:native("") static public function border_set(
-//			  const cchar_t *ls, const cchar_t *rs,
-//			  const cchar_t *ts, const cchar_t *bs,
-//			  const cchar_t *tl, const cchar_t *tr,
-//			  const cchar_t *bl, const cchar_t *br ):STATE;
+//			  ls:ConstPointer<CChar_t>, rs:ConstPointer<CChar_t>,
+//			  ts:ConstPointer<CChar_t>, bs:ConstPointer<CChar_t>,
+//			  tl:ConstPointer<CChar_t>, tr:ConstPointer<CChar_t>,
+//			  bl:ConstPointer<CChar_t>, br:ConstPointer<CChar_t> ):STATE;
 //	@:native("") static public function wborder_set(
 //				WINDOW *win,
-//				const cchar_t *ls, const cchar_t *rs,
-//				const cchar_t *ts, const cchar_t *bs,
-//				const cchar_t *tl, const cchar_t *tr, 
-//				const cchar_t *bl, const cchar_t *br):STATE;
-//	@:native("") static public function box_set(WINDOW *win, const cchar_t *verch, const cchar_t *horch):STATE;
-//	@:native("") static public function hline_set(const cchar_t *wch, int n):STATE;
-//	@:native("") static public function whline_set(WINDOW *win, const cchar_t *wch, int n):STATE;
-//	@:native("") static public function mvhline_set(int y, int x, const cchar_t *wch, int n):STATE;
-//	@:native("") static public function mvwhline_set(WINDOW *win, int y, int x, const cchar_t *wch, int n):STATE;
-//	@:native("") static public function vline_set(const cchar_t *wch, int n):STATE;
-//	@:native("") static public function wvline_set(WINDOW *win, const cchar_t *wch, int n):STATE;
-//	@:native("") static public function mvvline_set(int y, int x, const cchar_t *wch, int n):STATE;
-//	@:native("") static public function mvwvline_set(WINDOW *win, int y, int x, const cchar_t *wch, int n):STATE;
+//				ls:ConstPointer<CChar_t>, rs:ConstPointer<CChar_t>,
+//				ts:ConstPointer<CChar_t>, bs:ConstPointer<CChar_t>,
+//				tl:ConstPointer<CChar_t>, tr:ConstPointer<CChar_t>, 
+//				bl:ConstPointer<CChar_t>, br:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function box_set(WINDOW *win, verch:ConstPointer<CChar_t>, horch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function hline_set(wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function whline_set(WINDOW *win, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvhline_set(int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvwhline_set(WINDOW *win, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function vline_set(wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function wvline_set(WINDOW *win, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvvline_set(int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvwvline_set(WINDOW *win, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
 //
 //
 // /* curs_inopts(3X)*/
@@ -382,7 +385,7 @@ typedef CHType = Int;
 //
 ///* curs_getcchar(3X)*/
 //	 int getcchar(
-//					 const cchar_t *wcval,
+//					 wcval:ConstPointer<CChar_t>,
 //					 wchar_t *wch,
 //					 attrs:Pointer<Attrs>,
 //					 color_pair:Pointer<Short>,
@@ -405,12 +408,6 @@ typedef CHType = Int;
 //
 ///* curs_mouse(3X)**/
 //		 typedef unsigned long mmask_t;
-//
-//		 typedef struct {
-//				 id:Short;         /* ID to distinguish multiple devices */
-//				 int x, y, z;      /* event coordinates */
-//				 mmask_t bstate;   /* button state bits */
-//		 } MEVENT;
 //
 //		 bool has_mouse();
 //	@:native("") static public function getmouse(MEVENT *event):STATE;
@@ -496,10 +493,10 @@ typedef CHType = Int;
 //	@:native("") static public function mvwins_nwstr(WINDOW *win, int y, int x, const wchar_t *wstr, int n):STATE;
 //
 //	/* curs_ins_wch(3X)*/
-//	@:native("") static public function ins_wch(const cchar_t *wch):STATE;
-//	@:native("") static public function wins_wch(WINDOW *win, const cchar_t *wch):STATE;
-//	@:native("") static public function mvins_wch(int y, int x, const cchar_t *wch):STATE;
-//	@:native("") static public function mvwins_wch(WINDOW *win, int y, int x, const cchar_t *wch):STATE;
+//	@:native("") static public function ins_wch(wch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function wins_wch(WINDOW *win, wch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function mvins_wch(int y, int x, wch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function mvwins_wch(WINDOW *win, int y, int x, wch:ConstPointer<CChar_t>):STATE;
 //
 //	/* curs_insch(3X)*/
 //	@:native("") static public function insch(chtype ch):STATE;
@@ -563,14 +560,14 @@ typedef CHType = Int;
 //	@:native("") static public function wmove(WINDOW *win, int y, int x):STATE;
 //
 //	/* curs_add_wchstr(3X)*/
-//	@:native("") static public function add_wchstr(const cchar_t *wchstr):STATE;
-//	@:native("") static public function add_wchnstr(const cchar_t *wchstr, int n):STATE;
-//	@:native("") static public function wadd_wchstr(WINDOW * win, const cchar_t *wchstr):STATE;
-//	@:native("") static public function wadd_wchnstr(WINDOW * win, const cchar_t *wchstr, int n):STATE;
-//	@:native("") static public function mvadd_wchstr(int y, int x, const cchar_t *wchstr):STATE;
-//	@:native("") static public function mvadd_wchnstr(int y, int x, const cchar_t *wchstr, int n):STATE;
-//	@:native("") static public function mvwadd_wchstr(WINDOW *win, int y, int x, const cchar_t *wchstr):STATE;
-//	@:native("") static public function mvwadd_wchnstr(WINDOW *win, int y, int x, const cchar_t *wchstr, int n):STATE;
+//	@:native("") static public function add_wchstr(wchstr:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function add_wchnstr(wchstr:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function wadd_wchstr(WINDOW * win, wchstr:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function wadd_wchnstr(WINDOW * win, wchstr:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvadd_wchstr(int y, int x, wchstr:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function mvadd_wchnstr(int y, int x, wchstr:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvwadd_wchstr(WINDOW *win, int y, int x, wchstr:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function mvwadd_wchnstr(WINDOW *win, int y, int x, wchstr:ConstPointer<CChar_t>, int n):STATE;
 //
 //	/* curs_addchstr(3X)*/
 //	@:native("") static public function addchstr(const chstr:Pointer<CHType>):STATE;
@@ -607,7 +604,7 @@ typedef CHType = Int;
 //	@:native("") static public function pnoutrefresh(WINDOW *pad, int pminrow, int pmincol,
 //             int sminrow, int smincol, int smaxrow, int smaxcol):STATE;
 //	@:native("") static public function pechochar(WINDOW *pad, chtype ch):STATE;
-//	@:native("") static public function pecho_wchar(WINDOW *pad, const cchar_t *wch):STATE;
+//	@:native("") static public function pecho_wchar(WINDOW *pad, wch:ConstPointer<CChar_t>):STATE;
 //
 //	/*curs_scr_dump(3X)*/
 //	@:native("") static public function scr_dump(const char *filename):STATE;
@@ -670,25 +667,54 @@ typedef CHType = Int;
 
 @:enum extern abstract ATTRS(Int) to Int{
 	@:native("A_NORMAL") var A_NORMAL;       //Normal display (no highlight)
-	@:native("A_STANDOUT") var A_STANDOUT;     //Best highlighting mode of the terminal.
-	@:native("A_UNDERLINE") var A_UNDERLINE;    //Underlining
-	@:native("A_REVERSE") var A_REVERSE;      //Reverse video
-	@:native("A_BLINK") var A_BLINK;        //Blinking
-	@:native("A_DIM") var A_DIM;          //Half bright
-	@:native("A_BOLD") var A_BOLD;         //Extra bright or bold
-	@:native("A_PROTECT") var A_PROTECT;      //Protected mode
-	@:native("A_INVIS") var A_INVIS;        //Invisible or blank mode
-	@:native("A_ALTCHARSET") var A_ALTCHARSET;   //Alternate character set
-	@:native("A_ITALIC") var A_ITALIC;       //Italics (non-X/Open extension)
-	@:native("A_CHARTEXT") var A_CHARTEXT;     //Bit-mask to extract a character
-	//@:native("") var COLOR_PAIR;(n)  //Color-pair number n
+	@:native("A_STANDOUT") var A_STANDOUT;   //Best highlighting mode of the terminal.
+	@:native("A_UNDERLINE") var A_UNDERLINE; //Underlining
+	@:native("A_REVERSE") var A_REVERSE;     //Reverse video
+	@:native("A_BLINK") var A_BLINK;         //Blinking
+	@:native("A_DIM") var A_DIM;          	 //Half bright
+	@:native("A_BOLD") var A_BOLD;         	 //Extra bright or bold
+	@:native("A_PROTECT") var A_PROTECT;     //Protected mode
+	@:native("A_INVIS") var A_INVIS;         //Invisible or blank mode
+	@:native("A_ALTCHARSET") var A_ALTCHARSET;  //Alternate character set
+	@:native("A_ITALIC") var A_ITALIC;       		//Italics (non-X/Open extension)
+	@:native("A_CHARTEXT") var A_CHARTEXT;     	//Bit-mask to extract a character
 }
 
 @:enum extern abstract HIGHLIGHT(Int) to Int{
 	@:native("WA_HORIZONTAL") var WA_HORIZONTAL;  //Horizontal highlight
-	@:native("WA_LEFT") var WA_LEFT;        //Left highlight
-	@:native("WA_LOW") var WA_LOW;         //Low highlight
-	@:native("WA_RIGHT") var WA_RIGHT;       //Right highlight
-	@:native("WA_TOP") var WA_TOP;         //Top highlight
-	@:native("WA_VERTICAL") var WA_VERTICAL;    //Vertical highlight
+	@:native("WA_LEFT") var WA_LEFT;   	 			    //Left highlight
+	@:native("WA_LOW") var WA_LOW;         				//Low highlight
+	@:native("WA_RIGHT") var WA_RIGHT;       			//Right highlight
+	@:native("WA_TOP") var WA_TOP;        				//Top highlight
+	@:native("WA_VERTICAL") var WA_VERTICAL;    	//Vertical highlight
+}
+
+@:enum extern abstract TRACE_PARAM(UInt32) to UInt32{
+	@:native("TRACE_DISABLE") var TRACE_DISABLE;		/* turn off tracing. */
+	@:native("TRACE_TIMES") var TRACE_TIMES;				/* trace user and system times of updates. */
+	@:native("TRACE_TPUTS") var TRACE_TPUTS;				/* trace tputs calls. */
+	@:native("TRACE_UPDATE") var TRACE_UPDATE;			/* trace update actions, old & new screens. */
+	@:native("TRACE_MOVE") var TRACE_MOVE;					/* trace cursor movement and scrolling. */
+	@:native("TRACE_CHARPUT") var TRACE_CHARPUT;		/* trace all character outputs. */
+	@:native("TRACE_ORDINARY") var TRACE_ORDINARY;	/* trace all update actions.  The old and new screen contents are written to the trace file for each refresh. */
+	@:native("TRACE_CALLS") var TRACE_CALLS;				/* trace all curses calls.  The parameters for each call are traced, as well as return values. */
+	@:native("TRACE_VIRTPUT") var TRACE_VIRTPUT;		/* trace virtual character puts, i.e., calls to addch. */
+	@:native("TRACE_IEVENT") var TRACE_IEVENT;			/* trace low-level input processing, including timeouts. */
+	@:native("TRACE_BITS") var TRACE_BITS;					/* trace state of TTY control bits. */
+	@:native("TRACE_ICALLS") var TRACE_ICALLS;			/* trace internal/nested calls. */
+	@:native("TRACE_CCALLS") var TRACE_CCALLS;			/* trace per-character calls. */
+	@:native("TRACE_DATABASE") var TRACE_DATABASE;	/* trace read/write of terminfo/termcap data. */
+	@:native("TRACE_ATTRS") var TRACE_ATTRS;				/* trace changes to video attributes and colors. */
+	@:native("TRACE_MAXIMUM") var TRACE_MAXIMUM;		/* maximum trace level, enables all of the separate trace features.		 */
+}
+
+
+@:native("MEVENT")
+@:structAccess
+@:final abstract class MEVENT{
+	var id:Short; /* ID to distinguish multiple devices */
+	var x:Int;    /* event coordinates */
+	var y:Int;    	
+	var z:Int;
+	// mmask_t bstate /* button state bits */
 }
