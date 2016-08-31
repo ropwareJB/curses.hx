@@ -2,6 +2,7 @@ package curses.cpp;
 
 import cpp.Char;
 import cpp.Pointer;
+import cpp.ConstPointer;
 import cpp.UInt32;
 import cpp.Int32 as Short;
 import haxe.extern.Rest; 
@@ -9,7 +10,7 @@ import haxe.extern.Rest;
 typedef Attrs = Int; 			// attr_t
 typedef Null = Pointer<cpp.Void>; // void*, but should always be 0.
 typedef CHType = Int; 		// chtype_t
-typedef CChar_t = Int; 		// cchar_t
+//@:native("cchar_t") typedef CChar_t = Int; 		// cchar_t
 
 @:enum abstract CONSTS(Null) to Null{ var Nothing = null; }
 
@@ -63,15 +64,14 @@ typedef CChar_t = Int; 		// cchar_t
 	@:native("wchgat") static public function wchgat(win:Pointer<Window>, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
 	@:native("mvchgat") static public function mvchgat(y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
 	@:native("mvwchgat") static public function mvwchgat(win:Pointer<Window>, y:Int, x:Int, n:Int, attr:Attrs, color:Short, opts:Null):STATE;
-
 	
- /* curs_memleaks(3X)*/
+	/* curs_memleaks(3X)*/
 	@:native("_nc_freeall") static public function _nc_freeall():Void;
-	@:native("_nc_free_and_exit") static public function _nc_free_and_exit(int):Void;
+	@:native("_nc_free_and_exit") static public function _nc_free_and_exit(x:Int):Void;
 
- /* curs_trace(3X)**/
+	/* curs_trace(3X)**/
 	@:native("_tracef") static public function _tracef(format:ConstPointer<Char>, vs:Rest<Dynamic>):Void;
-	@:native("_tracedump") static public function _tracedump(label:ConstPointer<Char>, WINDOW *win):Void;
+	@:native("_tracedump") static public function _tracedump(label:ConstPointer<Char>, win:Pointer<Window>):Void;
 	@:native("_traceattr") static public function _traceattr(attr:Attrs):Pointer<Char>;
 	@:native("_traceattr2") static public function _traceattr2(buffer:Int, ch:CHType):Pointer<Char>;
 	@:native("_nc_tracebits") static public function _nc_tracebits():Pointer<Char>;
@@ -80,54 +80,54 @@ typedef CChar_t = Int; 		// cchar_t
 	@:native("_tracechar") static public function _tracechar(ch:Int):Pointer<Char>;
 	@:native("_tracechtype") static public function _tracechtype(ch:CHType):Pointer<Char>;
 	@:native("_tracechtype2") static public function _tracechtype2(buffer:Int, ch:CHType):Pointer<Char>;
-	@:native("_tracemouse") static public function _tracemouse(event:ConstrPointer<MEVENT>):Pointer<Char>;
+	@:native("_tracemouse") static public function _tracemouse(event:ConstPointer<MEVENT>):Pointer<Char>;
 	@:native("trace") static public function _trace(param:TRACE_PARAM):Void;
 
- /* curs_add_wch(3X)*/
-//	@:native("") static public function add_wch( wch:ConstPointer<CChar_t> ):STATE;
-//	@:native("") static public function wadd_wch( WINDOW *win, wch:ConstPointer<CChar_t> ):STATE;
-//	@:native("") static public function mvadd_wch( int y, int x, wch:ConstPointer<CChar_t> ):STATE;
-//	@:native("") static public function mvwadd_wch( WINDOW *win, int y, int x, wch:ConstPointer<CChar_t> ):STATE;
-//	@:native("") static public function echo_wchar( wch:ConstPointer<CChar_t> ):STATE;
-//	@:native("") static public function wecho_wchar( WINDOW *win, wch:ConstPointer<CChar_t> ):STATE;
-//
+	/* curs_add_wch(3X)*/
+	@:native("add_wch") static public function add_wch(wch:ConstPointer<CChar_t>):STATE;
+	@:native("wadd_wch") static public function wadd_wch(win:Pointer<Window>, wch:ConstPointer<CChar_t>):STATE;
+	@:native("mvadd_wch") static public function mvadd_wch(y:Int, x:Int, wch:ConstPointer<CChar_t>):STATE;
+	@:native("mvwadd_wch") static public function mvwadd_wch(win:Pointer<Window>, y:Int, x:Int, wch:ConstPointer<CChar_t>):STATE;
+	@:native("echo_wchar") static public function echo_wchar(wch:ConstPointer<CChar_t>):STATE;
+	@:native("wecho_wchar") static public function wecho_wchar(win:Pointer<Window>, wch:ConstPointer<CChar_t>):STATE;
+
 // /* curs_addch(3X)*/
 //	@:native("") static public function addch(const chtype ch):STATE;
-//	@:native("") static public function waddch(WINDOW *win, const chtype ch):STATE;
+//	@:native("") static public function waddch(win:Pointer<Window>, const chtype ch):STATE;
 //	@:native("") static public function mvaddch(int y, int x, const chtype ch):STATE;
-//	@:native("") static public function mvwaddch(WINDOW *win, int y, int x, const chtype ch):STATE;
+//	@:native("") static public function mvwaddch(win:Pointer<Window>, int y, int x, const chtype ch):STATE;
 //	@:native("") static public function echochar(const chtype ch):STATE;
-//	@:native("") static public function wechochar(WINDOW *win, const chtype ch):STATE;
+//	@:native("") static public function wechochar(win:Pointer<Window>, const chtype ch):STATE;
 //
 // /* curs_addchstr(3X)*/
 //	@:native("") static public function addchstr(const chstr:Pointer<CHType>):STATE;
 //	@:native("") static public function addchnstr(const chstr:Pointer<CHType>, int n):STATE;
-//	@:native("") static public function waddchstr(WINDOW *win, const chstr:Pointer<CHType>):STATE;
-//	@:native("") static public function waddchnstr(WINDOW *win, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function waddchstr(win:Pointer<Window>, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function waddchnstr(win:Pointer<Window>, const chstr:Pointer<CHType>, int n):STATE;
 //	@:native("") static public function mvaddchstr(int y, int x, const chstr:Pointer<CHType>):STATE;
 //	@:native("") static public function mvaddchnstr(int y, int x, const chstr:Pointer<CHType>, int n):STATE;
-//	@:native("") static public function mvwaddchstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>):STATE;
-//	@:native("") static public function mvwaddchnstr(WINDOW *win, int y, int x, const chstr:Pointer<CHType>, int n):STATE;
+//	@:native("") static public function mvwaddchstr(win:Pointer<Window>, int y, int x, const chstr:Pointer<CHType>):STATE;
+//	@:native("") static public function mvwaddchnstr(win:Pointer<Window>, int y, int x, const chstr:Pointer<CHType>, int n):STATE;
 //
 // /* curs_addstr(3X)*/
 //	@:native("") static public function addstr(str:ConstPointer<Char>):STATE;
 //	@:native("") static public function addnstr(str:ConstPointer<Char>, int n):STATE;
-//	@:native("") static public function waddstr(WINDOW *win, str:ConstPointer<Char>):STATE;
-//	@:native("") static public function waddnstr(WINDOW *win, str:ConstPointer<Char>, int n):STATE;
+//	@:native("") static public function waddstr(win:Pointer<Window>, str:ConstPointer<Char>):STATE;
+//	@:native("") static public function waddnstr(win:Pointer<Window>, str:ConstPointer<Char>, int n):STATE;
 //	@:native("") static public function mvaddstr(int y, int x, str:ConstPointer<Char>):STATE;
 //	@:native("") static public function mvaddnstr(int y, int x, str:ConstPointer<Char>, int n):STATE;
-//	@:native("") static public function mvwaddstr(WINDOW *win, int y, int x, str:ConstPointer<Char>):STATE;
-//	@:native("") static public function mvwaddnstr(WINDOW *win, int y, int x, str:ConstPointer<Char>, int n):STATE;
+//	@:native("") static public function mvwaddstr(win:Pointer<Window>, int y, int x, str:ConstPointer<Char>):STATE;
+//	@:native("") static public function mvwaddnstr(win:Pointer<Window>, int y, int x, str:ConstPointer<Char>, int n):STATE;
 //
 // /* curs_addwstr(3X)*/
 //	@:native("") static public function addwstr(const wchar_t *wstr):STATE;
 //	@:native("") static public function addnwstr(const wchar_t *wstr, int n):STATE;
-//	@:native("") static public function waddwstr(WINDOW *win, const wchar_t *wstr):STATE;
-//	@:native("") static public function waddnwstr(WINDOW *win, const wchar_t *wstr, int n):STATE;
+//	@:native("") static public function waddwstr(win:Pointer<Window>, const wchar_t *wstr):STATE;
+//	@:native("") static public function waddnwstr(win:Pointer<Window>, const wchar_t *wstr, int n):STATE;
 //	@:native("") static public function mvaddwstr(int y, int x, const wchar_t *wstr):STATE;
 //	@:native("") static public function mvaddnwstr(int y, int x, const wchar_t *wstr, int n):STATE;
-//	@:native("") static public function mvwaddwstr(WINDOW *win, int y, int x, const wchar_t *wstr):STATE;
-//	@:native("") static public function mvwaddnwstr(WINDOW *win, int y, int x, const wchar_t *wstr, int n):STATE;
+//	@:native("") static public function mvwaddwstr(win:Pointer<Window>, int y, int x, const wchar_t *wstr):STATE;
+//	@:native("") static public function mvwaddnwstr(win:Pointer<Window>, int y, int x, const wchar_t *wstr, int n):STATE;
 //
 // /* default_colors(3X)**/
 //	@:native("") static public function use_default_colors():STATE;
@@ -159,24 +159,24 @@ typedef CChar_t = Int; 		// cchar_t
 //
 // /* curs_bkgrnd(3X)*/
 //	@:native("") static public function bkgrnd( wch:ConstPointer<CChar_t>):STATE;
-//	@:native("") static public function wbkgrnd( WINDOW *win, wch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function wbkgrnd( win:Pointer<Window>, wch:ConstPointer<CChar_t>):STATE;
 //       void bkgrndset(wch:ConstPointer<CChar_t> );
-//       void wbkgrndset(WINDOW *win, wch:ConstPointer<CChar_t>);
+//       void wbkgrndset(win:Pointer<Window>, wch:ConstPointer<CChar_t>);
 //	@:native("") static public function getbkgrnd(cchar_t *wch):STATE;
-//	@:native("") static public function wgetbkgrnd(WINDOW *win, cchar_t *wch):STATE;
+//	@:native("") static public function wgetbkgrnd(win:Pointer<Window>, cchar_t *wch):STATE;
 //
 // /* curs_border(3X)*/
 //	@:native("") static public function border(chtype ls, chtype rs, chtype ts, chtype bs, chtype tl, chtype tr, chtype bl, chtype br):STATE;
-//	@:native("") static public function wborder(WINDOW *win, chtype ls, chtype rs, chtype ts, chtype bs, chtype tl, chtype tr, chtype bl, chtype br):STATE;
-//	@:native("") static public function box(WINDOW *win, chtype verch, chtype horch):STATE;
+//	@:native("") static public function wborder(win:Pointer<Window>, chtype ls, chtype rs, chtype ts, chtype bs, chtype tl, chtype tr, chtype bl, chtype br):STATE;
+//	@:native("") static public function box(win:Pointer<Window>, chtype verch, chtype horch):STATE;
 //	@:native("") static public function hline(chtype ch, int n):STATE;
-//	@:native("") static public function whline(WINDOW *win, chtype ch, int n):STATE;
+//	@:native("") static public function whline(win:Pointer<Window>, chtype ch, int n):STATE;
 //	@:native("") static public function vline(chtype ch, int n):STATE;
-//	@:native("") static public function wvline(WINDOW *win, chtype ch, int n):STATE;
+//	@:native("") static public function wvline(win:Pointer<Window>, chtype ch, int n):STATE;
 //	@:native("") static public function mvhline(int y, int x, chtype ch, int n):STATE;
-//	@:native("") static public function mvwhline(WINDOW *, int y, int x, chtype ch, int n):STATE;
+//	@:native("") static public function mvwhline(WINDOW *, int:Pointer<Window> y, int x, chtype ch, int n):STATE;
 //	@:native("") static public function mvvline(int y, int x, chtype ch, int n):STATE;
-//	@:native("") static public function mvwvline(WINDOW *, int y, int x, chtype ch, int n):STATE;
+//	@:native("") static public function mvwvline(WINDOW *, int:Pointer<Window> y, int x, chtype ch, int n):STATE;
 //
 // /* curs_border_set(3X)*/
 //	@:native("") static public function border_set(
@@ -185,20 +185,20 @@ typedef CChar_t = Int; 		// cchar_t
 //			  tl:ConstPointer<CChar_t>, tr:ConstPointer<CChar_t>,
 //			  bl:ConstPointer<CChar_t>, br:ConstPointer<CChar_t> ):STATE;
 //	@:native("") static public function wborder_set(
-//				WINDOW *win,
+//				win:Pointer<Window>,
 //				ls:ConstPointer<CChar_t>, rs:ConstPointer<CChar_t>,
 //				ts:ConstPointer<CChar_t>, bs:ConstPointer<CChar_t>,
 //				tl:ConstPointer<CChar_t>, tr:ConstPointer<CChar_t>, 
 //				bl:ConstPointer<CChar_t>, br:ConstPointer<CChar_t>):STATE;
-//	@:native("") static public function box_set(WINDOW *win, verch:ConstPointer<CChar_t>, horch:ConstPointer<CChar_t>):STATE;
+//	@:native("") static public function box_set(win:Pointer<Window>, verch:ConstPointer<CChar_t>, horch:ConstPointer<CChar_t>):STATE;
 //	@:native("") static public function hline_set(wch:ConstPointer<CChar_t>, int n):STATE;
-//	@:native("") static public function whline_set(WINDOW *win, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function whline_set(win:Pointer<Window>, wch:ConstPointer<CChar_t>, int n):STATE;
 //	@:native("") static public function mvhline_set(int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
-//	@:native("") static public function mvwhline_set(WINDOW *win, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvwhline_set(win:Pointer<Window>, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
 //	@:native("") static public function vline_set(wch:ConstPointer<CChar_t>, int n):STATE;
-//	@:native("") static public function wvline_set(WINDOW *win, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function wvline_set(win:Pointer<Window>, wch:ConstPointer<CChar_t>, int n):STATE;
 //	@:native("") static public function mvvline_set(int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
-//	@:native("") static public function mvwvline_set(WINDOW *win, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
+//	@:native("") static public function mvwvline_set(win:Pointer<Window>, int y, int x, wch:ConstPointer<CChar_t>, int n):STATE;
 //
 //
 // /* curs_inopts(3X)*/
@@ -207,45 +207,45 @@ typedef CChar_t = Int; 		// cchar_t
 //	@:native("") static public function echo():STATE;
 //	@:native("") static public function noecho():STATE;
 //	@:native("") static public function halfdelay(int tenths):STATE;
-//	@:native("") static public function intrflush(WINDOW *win, bool bf):STATE;
-//	@:native("") static public function keypad(WINDOW *win, bool bf):STATE;
-//	@:native("") static public function meta(WINDOW *win, bool bf):STATE;
-//	@:native("") static public function nodelay(WINDOW *win, bool bf):STATE;
+//	@:native("") static public function intrflush(win:Pointer<Window>, bool bf):STATE;
+//	@:native("") static public function keypad(win:Pointer<Window>, bool bf):STATE;
+//	@:native("") static public function meta(win:Pointer<Window>, bool bf):STATE;
+//	@:native("") static public function nodelay(win:Pointer<Window>, bool bf):STATE;
 //	@:native("") static public function raw():STATE;
 //	@:native("") static public function noraw():STATE;
 //		 void noqiflush();
 //		 void qiflush();
-//	@:native("") static public function notimeout(WINDOW *win, bool bf):STATE;
+//	@:native("") static public function notimeout(win:Pointer<Window>, bool bf):STATE;
 //		 void timeout(int delay);
-//		 void wtimeout(WINDOW *win, int delay);
+//		 void wtimeout(win:Pointer<Window>, int delay);
 //	@:native("") static public function typeahead(int fd):STATE;
 //
 // /* curs_clear(3X)*/
 //	@:native("") static public function erase():STATE;
-//	@:native("") static public function werase(WINDOW *win):STATE;
+//	@:native("") static public function werase(win:Pointer<Window>):STATE;
 //	@:native("") static public function clear():STATE;
-//	@:native("") static public function wclear(WINDOW *win):STATE;
+//	@:native("") static public function wclear(win:Pointer<Window>):STATE;
 //	@:native("") static public function clrtobot():STATE;
-//	@:native("") static public function wclrtobot(WINDOW *win):STATE;
+//	@:native("") static public function wclrtobot(win:Pointer<Window>):STATE;
 //	@:native("") static public function clrtoeol():STATE;
-//	@:native("") static public function wclrtoeol(WINDOW *win):STATE;
+//	@:native("") static public function wclrtoeol(win:Pointer<Window>):STATE;
 //
 // /* curs_outopts(3X)*/
-//	@:native("") static public function clearok(WINDOW *win, bool bf):STATE;
-//	@:native("") static public function idlok(WINDOW *win, bool bf):STATE;
-//       void idcok(WINDOW *win, bool bf);
-//       void immedok(WINDOW *win, bool bf);
-//	@:native("") static public function leaveok(WINDOW *win, bool bf):STATE;
+//	@:native("") static public function clearok(win:Pointer<Window>, bool bf):STATE;
+//	@:native("") static public function idlok(win:Pointer<Window>, bool bf):STATE;
+//       void idcok(win:Pointer<Window>, bool bf);
+//       void immedok(win:Pointer<Window>, bool bf);
+//	@:native("") static public function leaveok(win:Pointer<Window>, bool bf):STATE;
 //	@:native("") static public function setscrreg(int top, int bot):STATE;
-//	@:native("") static public function wsetscrreg(WINDOW *win, int top, int bot):STATE;
-//	@:native("") static public function scrollok(WINDOW *win, bool bf):STATE;
+//	@:native("") static public function wsetscrreg(win:Pointer<Window>, int top, int bot):STATE;
+//	@:native("") static public function scrollok(win:Pointer<Window>, bool bf):STATE;
 //	@:native("") static public function nl():STATE;
 //	@:native("") static public function nonl():STATE;
 //
 // /* curs_overlay(3X)*/
-//	@:native("") static public function overlay(const WINDOW *srcwin, WINDOW *dstwin):STATE;
-//	@:native("") static public function overwrite(const WINDOW *srcwin, WINDOW *dstwin):STATE;
-//	@:native("") static public function copywin(const WINDOW *srcwin, WINDOW *dstwin, int sminrow,
+//	@:native("") static public function overlay(const WINDOW *srcwin:Pointer<Window>, WINDOW *dstwin:Pointer<Window>):STATE;
+//	@:native("") static public function overwrite(const WINDOW *srcwin:Pointer<Window>, WINDOW *dstwin:Pointer<Window>):STATE;
+//	@:native("") static public function copywin(const WINDOW *srcwin:Pointer<Window>, WINDOW *dstwin:Pointer<Window>, int sminrow,
 //             int smincol, int dminrow, int dmincol, int dmaxrow,
 //             int dmaxcol, int overlay):STATE;
 //
@@ -258,7 +258,7 @@ typedef CChar_t = Int; 		// cchar_t
 //	@:native("") static public function savetty():STATE;
 //       void getsyx(int y, int x);
 //       void setsyx(int y, int x);
-//	@:native("") static public function ripoffline(int line, int (*init)(WINDOW *, int)):STATE;
+//	@:native("") static public function ripoffline(int line, int (*init)(WINDOW *, int:Pointer<Window>)):STATE;
 //	@:native("") static public function curs_set(int visibility):STATE;
 //	@:native("") static public function napms(int ms):STATE;
 //
@@ -297,24 +297,24 @@ typedef CChar_t = Int; 		// cchar_t
 //       void nofilter();
 //       void use_env(bool f);
 //       void use_tioctl(bool f);
-//	@:native("") static public function putwin(WINDOW *win, FILE *filep):STATE;
-//       WINDOW *getwin(FILE *filep);
+//	@:native("") static public function putwin(win:Pointer<Window>, FILE *filep):STATE;
+//       WINDOW *getwin:Pointer<Window>(FILE *filep);
 //	@:native("") static public function delay_output(int ms):STATE;
 //       int flushinp();
 //
 // /* curs_delch(3X)*/
 //	@:native("") static public function delch():STATE;
-//	@:native("") static public function wdelch(WINDOW *win):STATE;
+//	@:native("") static public function wdelch(win:Pointer<Window>):STATE;
 //	@:native("") static public function mvdelch(int y, int x):STATE;
-//	@:native("") static public function mvwdelch(WINDOW *win, int y, int x):STATE;
+//	@:native("") static public function mvwdelch(win:Pointer<Window>, int y, int x):STATE;
 //
 // /* curs_deleteln(3X)*/
 //	@:native("") static public function deleteln():STATE;
-//	@:native("") static public function wdeleteln(WINDOW *win):STATE;
+//	@:native("") static public function wdeleteln(win:Pointer<Window>):STATE;
 //	@:native("") static public function insdelln(int n):STATE;
-//	@:native("") static public function winsdelln(WINDOW *win, int n):STATE;
+//	@:native("") static public function winsdelln(win:Pointer<Window>, int n):STATE;
 //	@:native("") static public function insertln():STATE;
-//	@:native("") static public function winsertln(WINDOW *win)::STATE;
+//	@:native("") static public function winsertln(win:Pointer<Window>)::STATE;
 //
 // /* curs_initscr(3X)*/
 //       WINDOW *initscr();
@@ -328,45 +328,45 @@ typedef CChar_t = Int; 		// cchar_t
 //       WINDOW *newwin(
 //             int nlines, int ncols,
 //             int begin_y, int begin_x);
-//	@:native("") static public function delwin(WINDOW *win):STATE;
-//	@:native("") static public function mvwin(WINDOW *win, int y, int x):STATE;
-//       WINDOW *subwin(WINDOW *orig,
+//	@:native("") static public function delwin(win:Pointer<Window>):STATE;
+//	@:native("") static public function mvwin(win:Pointer<Window>, int y, int x):STATE;
+//       WINDOW *subwin(WINDOW *orig:Pointer<Window>,
 //             int nlines, int ncols,
 //             int begin_y, int begin_x);
-//       WINDOW *derwin(WINDOW *orig,
+//       WINDOW *derwin(WINDOW *orig:Pointer<Window>,
 //             int nlines, int ncols,
 //             int begin_y, int begin_x);
-//	@:native("") static public function mvderwin(WINDOW *win, int par_y, int par_x):STATE;
-//       WINDOW *dupwin(WINDOW *win);
-//       void wsyncup(WINDOW *win);
-//	@:native("") static public function syncok(WINDOW *win, bool bf):STATE;
-//       void wcursyncup(WINDOW *win);
-//       void wsyncdown(WINDOW *win);
+//	@:native("") static public function mvderwin(win:Pointer<Window>, int par_y, int par_x):STATE;
+//       WINDOW *dupwin(win:Pointer<Window>);
+//       void wsyncup(win:Pointer<Window>);
+//	@:native("") static public function syncok(win:Pointer<Window>, bool bf):STATE;
+//       void wcursyncup(win:Pointer<Window>);
+//       void wsyncdown(win:Pointer<Window>);
 //
 //	/* curs_refresh(3X)*/
 //	@:native("") static public function refresh():STATE;
-//	@:native("") static public function wrefresh(WINDOW *win):STATE;
-//	@:native("") static public function wnoutrefresh(WINDOW *win):STATE;
+//	@:native("") static public function wrefresh(win:Pointer<Window>):STATE;
+//	@:native("") static public function wnoutrefresh(win:Pointer<Window>):STATE;
 //	@:native("") static public function doupdate():STATE;
-//	@:native("") static public function redrawwin(WINDOW *win):STATE;
-//	@:native("") static public function wredrawln(WINDOW *win, int beg_line, int num_lines):STATE;
+//	@:native("") static public function redrawwin(win:Pointer<Window>):STATE;
+//	@:native("") static public function wredrawln(win:Pointer<Window>, int beg_line, int num_lines):STATE;
 //
 //	/* curs_get_wch(3X)*/
 //	@:native("") static public function get_wch(wint_t *wch):Int;
-//	@:native("") static public function wget_wch(WINDOW *win, wint_t *wch):Int;
+//	@:native("") static public function wget_wch(win:Pointer<Window>, wint_t *wch):Int;
 //	@:native("") static public function mvget_wch(int y, int x, wint_t *wch):Int;
-//	@:native("") static public function mvwget_wch(WINDOW *win, int y, int x, wint_t *wch):Int;
+//	@:native("") static public function mvwget_wch(win:Pointer<Window>, int y, int x, wint_t *wch):Int;
 //	@:native("") static public function unget_wch(const wchar_t wch):Int;
 //
 //	/* curs_get_wstr(3X)*/
 //	@:native("") static public function get_wstr(wint_t *wstr):STATE;
 //	@:native("") static public function getn_wstr(wint_t *wstr, int n):STATE;
-//	@:native("") static public function wget_wstr(WINDOW *win, wint_t *wstr):STATE;
-//	@:native("") static public function wgetn_wstr(WINDOW *win, wint_t *wstr, int n):STATE;
+//	@:native("") static public function wget_wstr(win:Pointer<Window>, wint_t *wstr):STATE;
+//	@:native("") static public function wgetn_wstr(win:Pointer<Window>, wint_t *wstr, int n):STATE;
 //	@:native("") static public function mvget_wstr(int y, int x, wint_t *wstr):STATE;
 //	@:native("") static public function mvgetn_wstr(int y, int x, wint_t *wstr, int n):STATE;
-//	@:native("") static public function mvwget_wstr(WINDOW *win, int y, int x, wint_t *wstr):STATE;
-//	@:native("") static public function mvwgetn_wstr(WINDOW *win, int y, int x, wint_t *wstr, int n):STATE;
+//	@:native("") static public function mvwget_wstr(win:Pointer<Window>, int y, int x, wint_t *wstr):STATE;
+//	@:native("") static public function mvwgetn_wstr(win:Pointer<Window>, int y, int x, wint_t *wstr, int n):STATE;
 //
 ///*getbegx                 curs_legacy(3X)**/
 ///*getbegy                 curs_legacy(3X)**/
@@ -378,10 +378,10 @@ typedef CChar_t = Int; 		// cchar_t
 ///*getpary                 curs_legacy(3X)**/
 //
 ///* curs_getyx(3X)*/
-//	 void getyx(WINDOW *win, int y, int x);
-//	 void getparyx(WINDOW *win, int y, int x);
-//	 void getbegyx(WINDOW *win, int y, int x);
-//	 void getmaxyx(WINDOW *win, int y, int x);
+//	 void getyx(win:Pointer<Window>, int y, int x);
+//	 void getparyx(win:Pointer<Window>, int y, int x);
+//	 void getbegyx(win:Pointer<Window>, int y, int x);
+//	 void getmaxyx(win:Pointer<Window>, int y, int x);
 //
 ///* curs_getcchar(3X)*/
 //	 int getcchar(
@@ -400,9 +400,9 @@ typedef CChar_t = Int; 		// cchar_t
 //
 ///* curs_getch(3X)*/
 //       int getch();
-//       int wgetch(WINDOW *win);
+//       int wgetch(win:Pointer<Window>);
 //       int mvgetch(int y, int x);
-//       int mvwgetch(WINDOW *win, int y, int x);
+//       int mvwgetch(win:Pointer<Window>, int y, int x);
 //       int ungetch(int ch);
 //       int has_key(int ch);
 //
@@ -413,7 +413,7 @@ typedef CChar_t = Int; 		// cchar_t
 //	@:native("") static public function getmouse(MEVENT *event):STATE;
 //	@:native("") static public function ungetmouse(MEVENT *event):STATE;
 //		 mmask_t mousemask(mmask_t newmask, mmask_t *oldmask);
-//		 bool wenclose(const WINDOW *win, int y, int x);
+//		 bool wenclose(const win:Pointer<Window>, int y, int x);
 //		 bool mouse_trafo(int* pY, int* pX, bool to_screen);
 //		 bool wmouse_trafo(const WINDOW* win, int* pY, int* pX,
 //					bool to_screen);
@@ -423,39 +423,39 @@ typedef CChar_t = Int; 		// cchar_t
 //	/* curs_getstr(3X)*/
 //	@:native("") static public function getstr(char *str):STATE;
 //	@:native("") static public function getnstr(char *str, int n):STATE;
-//	@:native("") static public function wgetstr(WINDOW *win, char *str):STATE;
-//	@:native("") static public function wgetnstr(WINDOW *win, char *str, int n):STATE;
+//	@:native("") static public function wgetstr(win:Pointer<Window>, char *str):STATE;
+//	@:native("") static public function wgetnstr(win:Pointer<Window>, char *str, int n):STATE;
 //	@:native("") static public function mvgetstr(int y, int x, char *str):STATE;
-//	@:native("") static public function mvwgetstr(WINDOW *win, int y, int x, char *str):STATE;
+//	@:native("") static public function mvwgetstr(win:Pointer<Window>, int y, int x, char *str):STATE;
 //	@:native("") static public function mvgetnstr(int y, int x, char *str, int n):STATE;
-//	@:native("") static public function mvwgetnstr(WINDOW *, int y, int x, char *str, int n):STATE;
+//	@:native("") static public function mvwgetnstr(WINDOW *, int:Pointer<Window> y, int x, char *str, int n):STATE;
 //
 //	/* curs_in_wch(3X)*/
 //	@:native("") static public function in_wch(cchar_t *wcval):STATE;
 //	@:native("") static public function mvin_wch(int y, int x, cchar_t *wcval):STATE;
-//	@:native("") static public function mvwin_wch(WINDOW *win, int y, int x, cchar_t *wcval):STATE;
-//	@:native("") static public function win_wch(WINDOW *win, cchar_t *wcval):STATE;
+//	@:native("") static public function mvwin_wch(win:Pointer<Window>, int y, int x, cchar_t *wcval):STATE;
+//	@:native("") static public function win_wch(win:Pointer<Window>, cchar_t *wcval):STATE;
 //
 //	/* curs_in_wchstr(3X)*/
 //	@:native("") static public function in_wchstr(cchar_t *wchstr):STATE;
 //	@:native("") static public function in_wchnstr(cchar_t *wchstr, int n):STATE;
-//	@:native("") static public function win_wchstr(WINDOW *win, cchar_t *wchstr):STATE;
-//	@:native("") static public function win_wchnstr(WINDOW *win, cchar_t *wchstr, int n):STATE;
+//	@:native("") static public function win_wchstr(win:Pointer<Window>, cchar_t *wchstr):STATE;
+//	@:native("") static public function win_wchnstr(win:Pointer<Window>, cchar_t *wchstr, int n):STATE;
 //	@:native("") static public function mvin_wchstr(int y, int x, cchar_t *wchstr):STATE;
 //	@:native("") static public function mvin_wchnstr(int y, int x, cchar_t *wchstr, int n):STATE;
-//	@:native("") static public function mvwin_wchstr(WINDOW *win, int y, int x, cchar_t *wchstr):STATE;
-//	@:native("") static public function mvwin_wchnstr(WINDOW *win, int y, int x, cchar_t *wchstr, int n):STATE;
+//	@:native("") static public function mvwin_wchstr(win:Pointer<Window>, int y, int x, cchar_t *wchstr):STATE;
+//	@:native("") static public function mvwin_wchnstr(win:Pointer<Window>, int y, int x, cchar_t *wchstr, int n):STATE;
 //
 //	/* curs_inch(3X)*/
 //       chtype inch();
-//       chtype winch(WINDOW *win);
+//       chtype winch(win:Pointer<Window>);
 //       chtype mvinch(int y, int x);
-//       chtype mvwinch(WINDOW *win, int y, int x);
+//       chtype mvwinch(win:Pointer<Window>, int y, int x);
 //
 //	/* curs_inchstr(3X)*/
 //	@:native("") static public function inchstr(chstr:Pointer<CHType>):Int;
 //	@:native("") static public function inchnstr(chstr:Pointer<CHType>, int n):Int;
-//	@:native("") static public function winchstr(WINDOW *win, chstr:Pointer<CHType>):Int;
+//	@:native("") static public function winchstr(win:Pointer<Window>, chstr:Pointer<CHType>):Int;
 //	@:native("") static public function winchnstr(WINDOW *win, chstr:Pointer<CHType>, int n):Int;
 //	@:native("") static public function mvinchstr(int y, int x, chstr:Pointer<CHType>):Int;
 //	@:native("") static public function mvinchnstr(int y, int x, chstr:Pointer<CHType>, int n):Int;
@@ -711,10 +711,79 @@ typedef CChar_t = Int; 		// cchar_t
 
 @:native("MEVENT")
 @:structAccess
-@:final abstract class MEVENT{
+@:final extern class MEVENT{
 	var id:Short; /* ID to distinguish multiple devices */
 	var x:Int;    /* event coordinates */
 	var y:Int;    	
 	var z:Int;
 	// mmask_t bstate /* button state bits */
+}
+
+@:native("cchar_t")
+@:final extern abstract CChar_t(UInt32){}
+
+@:final @:enum extern abstract CCHar_t_Const(ConstPointer<CChar_t>) to ConstPointer<CChar_t>{
+	@:native("WACS_S1") var WACS_S1; //   NCURSES_WACS('o') /* scan line 1 */
+	@:native("WACS_S9") var WACS_S9; //   NCURSES_WACS('s') /* scan line 9 */
+	@:native("WACS_DIAMOND") var WACS_DIAMOND; //  NCURSES_WACS('`') /* diamond */
+	@:native("WACS_CKBOARD") var WACS_CKBOARD; //  NCURSES_WACS('a') /* checker board */
+	@:native("WACS_DEGREE") var WACS_DEGREE; // NCURSES_WACS('f') /* degree symbol */
+	@:native("WACS_PLMINUS") var WACS_PLMINUS; //  NCURSES_WACS('g') /* plus/minus */
+	@:native("WACS_BULLET") var WACS_BULLET; // NCURSES_WACS('~') /* bullet */
+
+	/* Teletype 5410v1 symbols */
+	@:native("WACS_LARROW") var WACS_LARROW; // NCURSES_WACS(',') /* arrow left */
+	@:native("WACS_RARROW") var WACS_RARROW; // NCURSES_WACS('+') /* arrow right */
+	@:native("WACS_DARROW") var WACS_DARROW; // NCURSES_WACS('.') /* arrow down */
+	@:native("WACS_UARROW") var WACS_UARROW; // NCURSES_WACS('-') /* arrow up */
+	@:native("WACS_BOARD") var WACS_BOARD; //  NCURSES_WACS('h') /* board of squares */
+	@:native("WACS_LANTERN") var WACS_LANTERN; //  NCURSES_WACS('i') /* lantern symbol */
+	@:native("WACS_BLOCK") var WACS_BLOCK; //  NCURSES_WACS('0') /* solid square block */
+
+	/* ncurses extensions */
+	@:native("WACS_S3") var WACS_S3; //   NCURSES_WACS('p') /* scan line 3 */
+	@:native("WACS_S7") var WACS_S7; //   NCURSES_WACS('r') /* scan line 7 */
+	@:native("WACS_LEQUAL") var WACS_LEQUAL; // NCURSES_WACS('y') /* less/equal */
+	@:native("WACS_GEQUAL") var WACS_GEQUAL; // NCURSES_WACS('z') /* greater/equal */
+	@:native("WACS_PI") var WACS_PI; //   NCURSES_WACS('{') /* Pi */
+	@:native("WACS_NEQUAL") var WACS_NEQUAL; // NCURSES_WACS('|') /* not equal */
+	@:native("WACS_STERLING") var WACS_STERLING; // NCURSES_WACS('}') /* UK pound sign */
+
+	/* double lines */
+	@:native("WACS_BDDB") var WACS_BDDB; // NCURSES_WACS('C')
+	@:native("WACS_DDBB") var WACS_DDBB; // NCURSES_WACS('D')
+	@:native("WACS_BBDD") var WACS_BBDD; // NCURSES_WACS('B')
+	@:native("WACS_DBBD") var WACS_DBBD; // NCURSES_WACS('A')
+	@:native("WACS_DBDD") var WACS_DBDD; // NCURSES_WACS('G')
+	@:native("WACS_DDDB") var WACS_DDDB; // NCURSES_WACS('F')
+	@:native("WACS_DDBD") var WACS_DDBD; // NCURSES_WACS('H')
+	@:native("WACS_BDDD") var WACS_BDDD; // NCURSES_WACS('I')
+	@:native("WACS_BDBD") var WACS_BDBD; // NCURSES_WACS('R')
+	@:native("WACS_DBDB") var WACS_DBDB; // NCURSES_WACS('Y')
+	@:native("WACS_DDDD") var WACS_DDDD; // NCURSES_WACS('E')
+
+	@:native("WACS_D_ULCORNER") var WACS_D_ULCORNER; // WACS_BDDB
+	@:native("WACS_D_LLCORNER") var WACS_D_LLCORNER; // WACS_DDBB
+	@:native("WACS_D_URCORNER") var WACS_D_URCORNER; // WACS_BBDD
+	@:native("WACS_D_LRCORNER") var WACS_D_LRCORNER; // WACS_DBBD
+	@:native("WACS_D_RTEE") var WACS_D_RTEE; // WACS_DBDD
+	@:native("WACS_D_LTEE") var WACS_D_LTEE; // WACS_DDDB
+	@:native("WACS_D_BTEE") var WACS_D_BTEE; // WACS_DDBD
+	@:native("WACS_D_TTEE") var WACS_D_TTEE; // WACS_BDDD
+	@:native("WACS_D_HLINE") var WACS_D_HLINE; //  WACS_BDBD
+	@:native("WACS_D_VLINE") var WACS_D_VLINE; //  WACS_DBDB
+	@:native("WACS_D_PLUS") var WACS_D_PLUS; // WACS_DDDD
+
+	/* thick lines */
+	@:native("WACS_BTTB") var WACS_BTTB; // NCURSES_WACS('L')
+	@:native("WACS_TTBB") var WACS_TTBB; // NCURSES_WACS('M')
+	@:native("WACS_BBTT") var WACS_BBTT; // NCURSES_WACS('K')
+	@:native("WACS_TBBT") var WACS_TBBT; // NCURSES_WACS('J')
+	@:native("WACS_TBTT") var WACS_TBTT; // NCURSES_WACS('U')
+	@:native("WACS_TTTB") var WACS_TTTB; // NCURSES_WACS('T')
+	@:native("WACS_TTBT") var WACS_TTBT; // NCURSES_WACS('V')
+	@:native("WACS_BTTT") var WACS_BTTT; // NCURSES_WACS('W')
+	@:native("WACS_BTBT") var WACS_BTBT; // NCURSES_WACS('Q')
+	@:native("WACS_TBTB") var WACS_TBTB; // NCURSES_WACS('X')
+	@:native("WACS_TTTT") var WACS_TTTT; // NCURSES_WACS('N')
 }
