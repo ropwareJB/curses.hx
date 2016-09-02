@@ -20,7 +20,12 @@ If you have an issue relating to usage of the library, please check the samples 
 
 #### TODO List  
 + Java / JCurses  
+<<<<<<< HEAD
 + Cpp
+=======
++ PHP NCurses
++ C++ NCurses
+>>>>>>> cpp
 + Language-independent middleman  
 + Check UniCurses
 + More samples
