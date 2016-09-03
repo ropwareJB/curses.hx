@@ -12,7 +12,6 @@ typedef Attrs = Int; 			// attr_t
 typedef Null = Pointer<cpp.Void>; // void*, but should always be 0.
 typedef WInt = UInt32;
 typedef MMask_t = UInt64; // mmask_t;
-//@:native("cchar_t") typedef CChar_t = Int; 		// cchar_t
 
 @:enum abstract CONSTS(Null) to Null{ var Nothing = null; }
 
@@ -25,12 +24,6 @@ typedef MMask_t = UInt64; // mmask_t;
 @:final extern class Curses{
 
 	@:native("COLOR_PAIR") static public function color_pair(n:Int):CHType;
-
-	//@:native("initscr") static public function initscr():Pointer<Window>;
-	//@:native("mvaddstr") static public function mvaddstr(y:Int,x:Int,str:String):Void;
-	//@:native("refresh") static public function refresh():Void;
-	//@:native("delwin") static public function delwin(w:Pointer<Window>):Void;
-	//@:native("endwin") static public function endwin():Void;
 
 	/* curs_color(3x) */
 	@:native("start_color") static public function start_color():STATE;
@@ -623,7 +616,7 @@ typedef MMask_t = UInt64; // mmask_t;
 	//@:native("tputs") static public function tputs(str:String, affcnt:Int, int (*putc)(int)):STATE;
 
 	/* wresize(3X)**/
-	@:native("") static public function wresize(win:Pointer<Window>, lines:Int, columns:Int):STATE;
+	@:native("wresize") static public function wresize(win:Pointer<Window>, lines:Int, columns:Int):STATE;
 
 }
 

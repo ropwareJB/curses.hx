@@ -2,7 +2,7 @@ package curses.py;
 
 import python.Tuple;
 
-@:enum abstract CURS_VISIBLITY(Int) to Int{
+@:enum abstract CURS_VISIBILITY(Int) to Int{
 	var INVISIBLE = 0;
 	var NORMAL = 1;
 	var VISIBLE = 2;
@@ -44,7 +44,7 @@ import python.Tuple;
 	public static function color_pair(color_number:Int):Int;
 	/* Return the attribute value for displaying text in the specified color. This attribute value can be combined with A_STANDOUT, A_REVERSE, and the other A_* attributes. pair_number() is the counterpart to this function. */
 
-	public static function curs_set(visibility:CURS_VISIBLITY):Void;
+	public static function curs_set(visibility:CURS_VISIBILITY):Void;
 	/* Set the cursor state. visibility can be set to 0, 1, or 2, for invisible, normal, or very visible. If the terminal supports the visibility requested, the previous cursor state is returned; otherwise, an exception is raised. On many terminals, the “visible” mode is an underline cursor and the “very visible” mode is a block cursor.*/
 
 	public static function def_prog_mode():Void;
