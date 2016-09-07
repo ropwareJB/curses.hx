@@ -4,5 +4,10 @@ package curses.cpp;
 @:include("curses.h") 
 @:final extern class Window{
 	
+	public inline function addstr():Void{
+
+
+
+	}
 
 }

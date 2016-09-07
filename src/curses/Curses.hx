@@ -1,18 +1,15 @@
 package curses;
 
-import curses.py.Curses as PyCurses;
 import curses.RGB;
 
-/*@:enum abstract CURS_VISIBLITY(Int) to Int{
-  var INVISIBLE = 0;
-  var NORMAL = 1;
-  var VISIBLE = 2;
-}*/
-
 #if python
+	import curses.py.Curses as PyCurses;
 	typedef CURS_VISIBILITY = curses.py.Curses.CURS_VISIBILITY;
-#else cpp
-
+#elseif cpp
+	import curses.cpp.Curses as CppCurses;
+	typedef CURS_VISIBILITY = curses.cpp.Curses.CURS_VISIBILITY;
+	typedef MMask_t = curses.cpp.Curses.MMask_t;
+	typedef MEVENT = curses.cpp.Curses.MEVENT;
 #end
 
 typedef ColorPair = {
@@ -27,7 +24,8 @@ typedef ColorPair = {
 	public static function get_COLORS(){
 		#if python
 			return PyCurses.COLORS;
-		#else cpp
+		#elseif cpp
+			return CppCurses.COLORS;
 		#end
 	}
 	
@@ -35,7 +33,8 @@ typedef ColorPair = {
 		/* Return the output speed of the terminal in bits per second. On software terminal emulators it will have a fixed high value. Included for historical reasons; in former times, it was used to write output loops for time delays and occasionally to change interfaces depending on the line speed.*/
 		#if python
 			return PyCurses.baudrate();
-		#else cpp
+		#elseif cpp
+			return CppCurses.baudrate();
 		#end
 	}
 
@@ -43,7 +42,8 @@ typedef ColorPair = {
 		/* Emit a short attention sound.*/
 		#if python
 			PyCurses.beep();
-		#else cpp
+		#elseif cpp
+			CppCurses.beep();
 		#end
 	}
 
@@ -51,7 +51,8 @@ typedef ColorPair = {
 		/* Return True or False, depending on whether the programmer can change the colors displayed by the terminal.*/
 		#if python
 			return PyCurses.can_change_color();
-		#else cpp
+		#elseif cpp
+			return CppCurses.can_change_color();
 		#end
 	}
 
@@ -59,7 +60,8 @@ typedef ColorPair = {
 		/* Enter cbreak mode. In cbreak mode (sometimes called “rare” mode) normal tty line buffering is turned off and characters are available to be read one by one. However, unlike raw mode, special characters (interrupt, quit, suspend, and flow control) retain their effects on the tty driver and calling program. Calling first raw() then cbreak() leaves the terminal in cbreak mode. */
 		#if python
 			PyCurses.cbreak();
-		#else cpp
+		#elseif cpp
+			CppCurses.cbreak();
 		#end
 	}
 
@@ -68,7 +70,11 @@ typedef ColorPair = {
 		#if python
 			var tup3 = PyCurses.color_content(color_number).toArray();
 			return new RGB(tup3[0], tup3[1], tup3[2]);
-		#else cpp
+		#elseif cpp
+			var r:Int, g:Int, b:Int;
+			CppCurses.color_content(color_number, cpp.Pointer.addressOf(r), 
+									cpp.Pointer.addressOf(g), cpp.Pointer.addressOf(b));
+			return new RGB(r, g, b);
 		#end
 	}
 
@@ -76,15 +82,17 @@ typedef ColorPair = {
 		/* Return the attribute value for displaying text in the specified color. This attribute value can be combined with A_STANDOUT, A_REVERSE, and the other A_* attributes. pair_number() is the counterpart to this function. */
 		#if python
 			return PyCurses.color_pair(color_number);
-		#else cpp
+		#elseif cpp
+			return CppCurses.color_pair(color_number);
 		#end
 	}
 
   public static function cursSet(visibility:CURS_VISIBILITY):Void{
 		/* Set the cursor state. visibility can be set to 0, 1, or 2, for invisible, normal, or very visible. If the terminal supports the visibility requested, the previous cursor state is returned; otherwise, an exception is raised. On many terminals, the “visible” mode is an underline cursor and the “very visible” mode is a block cursor.*/
 		#if python
-			return PyCurses.curs_set(visibility);
-		#else cpp
+			PyCurses.curs_set(visibility);
+		#elseif cpp
+			CppCurses.curs_set(visibility);
 		#end
 	}
 
@@ -92,7 +100,8 @@ typedef ColorPair = {
 		/* Save the current terminal mode as the “program” mode, the mode when the running program is using curses. (Its counterpart is the “shell” mode, for when the program is not in curses.) Subsequent calls to reset_prog_mode() will restore this mode. */
 		#if python
 			PyCurses.def_prog_mode();
-		#else cpp
+		#elseif cpp
+			CppCurses.def_prog_mode();
 		#end
 	}
 
@@ -100,7 +109,8 @@ typedef ColorPair = {
 		/* Save the current terminal mode as the “shell” mode, the mode when the running program is not using curses. (Its counterpart is the “program” mode, when the program is using curses capabilities.) Subsequent calls to reset_shell_mode() will restore this mode. */
 		#if python
 			PyCurses.def_shell_mode();
-		#else cpp
+		#elseif cpp
+			CppCurses.def_shell_mode();
 		#end
 	}
 
@@ -108,7 +118,8 @@ typedef ColorPair = {
 		/* Insert an ms millisecond pause in output. */
 		#if python
 			PyCurses.delay_output(ms);
-		#else cpp
+		#elseif cpp
+			CppCurses.delay_output(ms);
 		#end
 	}
 
@@ -117,7 +128,8 @@ typedef ColorPair = {
   /* The virtual screen may be updated by a noutrefresh() call after write operations such as addstr() have been performed on a window. The normal refresh() call is simply noutrefresh() followed by doupdate(); if you have to update multiple windows, you can speed performance and perhaps reduce screen flicker by issuing noutrefresh() calls on all windows, followed by a single doupdate(). */
 		#if python
 			PyCurses.doupdate();
-		#else cpp
+		#elseif cpp
+			CppCurses.doupdate();
 		#end
 	}
 
@@ -125,7 +137,8 @@ typedef ColorPair = {
 		/* Enter echo mode. In echo mode, each character input is echoed to the screen as it is entered. */
 		#if python
 			PyCurses.echo();
-		#else cpp
+		#elseif cpp
+			CppCurses.echo();
 		#end
 	}
 
@@ -133,7 +146,7 @@ typedef ColorPair = {
 		/* De-initialize the library, and return terminal to normal status. */
 		#if python
 			PyCurses.endwin();
-		#else cpp
+		#elseif cpp
 		#end
 	}
 
@@ -141,7 +154,8 @@ typedef ColorPair = {
 		/* Return the user’s current erase character. Under Unix operating systems this is a property of the controlling tty of the curses program, and is not set by the curses library itself. */
 		#if python
 			return PyCurses.erasechar();
-		#else cpp
+		#elseif cpp
+			return CppCurses.erasechar();
 		#end
 	}
 
@@ -149,7 +163,8 @@ typedef ColorPair = {
 		/* The filter() routine, if used, must be called before initscr() is called. The effect is that, during those calls, LINES is set to 1; the capabilities clear, cup, cud, cud1, cuu1, cuu, vpa are disabled; and the home string is set to the value of cr. The effect is that the cursor is confined to the current line, and so are screen updates. This may be used for enabling character-at-a-time line editing without touching the rest of the screen. */
 		#if python
 			PyCurses.filter();
-		#else cpp
+		#elseif cpp
+			CppCurses.filter();
 		#end
 	}
 
@@ -157,7 +172,8 @@ typedef ColorPair = {
 		/* Flash the screen. That is, change it to reverse-video and then change it back in a short interval. Some people prefer such as ‘visible bell’ to the audible attention signal produced by beep(). */
 		#if python
 			PyCurses.flash();
-		#else cpp
+		#elseif cpp
+			CppCurses.flash();
 		#end
 	}
 
@@ -165,7 +181,8 @@ typedef ColorPair = {
 		/* Flush all input buffers. This throws away any typeahead that has been typed by the user and has not yet been processed by the program. */
 		#if python
 			PyCurses.flushinp();
-		#else cpp
+		#elseif cpp
+			CppCurses.flushinp();
 		#end
 	}
 
@@ -174,7 +191,10 @@ typedef ColorPair = {
 		#if python
 			var tup = PyCurses.getmouse();
 			return new MouseState(tup[0], tup[1], tup[2], tup[3], tup[4]);
-		#else cpp
+		#elseif cpp
+			var tmp:cpp.Pointer<MEVENT> = MEVENT.create();
+			CppCurses.getmouse(tmp);
+			return new MouseState(tmp.ref.id, tmp.ref.x, tmp.ref.y, tmp.ref.z, tmp.ref.bstate);
 		#end
 	}
 
@@ -183,7 +203,10 @@ typedef ColorPair = {
 		#if python
 			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.getsyx();
 			return new Point(tup[1], tup[0]);
-		#else cpp
+		#elseif cpp
+			var x:Int, y:Int;
+			CppCurses.getsyx(y,x);
+			return new Point(x,y);
 		#end
 	}
 
@@ -191,7 +214,10 @@ typedef ColorPair = {
 		/* Read window related data stored in the file by an earlier putwin() call. The routine then creates and initializes a new window using that data, returning the new window object. */
 		#if python
 			return PyCurses.getwin(file);
-		#else cpp
+		#elseif cpp
+			//return PyCurses.getwin(file);
+			// TODO
+			return null;
 		#end
 	}
 
@@ -199,7 +225,8 @@ typedef ColorPair = {
 		/* Return True if the terminal can display colors; otherwise, return False. */
 		#if python
 			return PyCurses.has_colors();
-		#else cpp
+		#elseif cpp
+			return CppCurses.has_colors();
 		#end
 	}
 
@@ -207,7 +234,8 @@ typedef ColorPair = {
 		/* Return True if the terminal has insert- and delete-character capabilities. This function is included for historical reasons only, as all modern software terminal emulators have such capabilities. */
 		#if python
 			return PyCurses.has_ic();
-		#else cpp
+		#elseif cpp
+			return CppCurses.has_ic();
 		#end
 	}
 
@@ -215,7 +243,8 @@ typedef ColorPair = {
 		/* Return True if the terminal has insert- and delete-line capabilities, or can simulate them using scrolling regions. This function is included for historical reasons only, as all modern software terminal emulators have such capabilities. */
 		#if python
 			return PyCurses.has_il();
-		#else cpp
+		#elseif cpp
+			return CppCurses.has_il();
 		#end
 	}
 
@@ -223,15 +252,17 @@ typedef ColorPair = {
 		/* Take a key value ch, and return True if the current terminal type recognizes a key with that value. */
 		#if python
 			return PyCurses.has_key(ch);
-		#else cpp
+		#elseif cpp
+			return CppCurses.has_key(ch)!=0;
 		#end
 	}
 
   public static function halfDelay(tenths:Int):Void{
 		/* Used for half-delay mode, which is similar to cbreak mode in that characters typed by the user are immediately available to the program. However, after blocking for tenths tenths of seconds, an exception is raised if nothing has been typed. The value of tenths must be a number between 1 and 255. Use nocbreak() to leave half-delay mode. */
 		#if python
-			return PyCurses.halfdelay(tenths);
-		#else cpp
+			PyCurses.halfdelay(tenths);
+		#elseif cpp
+			CppCurses.halfdelay(tenths);
 		#end
 	}
 
@@ -239,7 +270,8 @@ typedef ColorPair = {
 		/* Change the definition of a color, taking the number of the color to be changed followed by three RGB values (for the amounts of red, green, and blue components). The value of color_number must be between 0 and COLORS. Each of r, g, b, must be a value between 0 and 1000. When init_color() is used, all occurrences of that color on the screen immediately change to the new definition. This function is a no-op on most terminals; it is active only if can_change_color() returns 1. */
 		#if python
 			PyCurses.init_color(color_number, r, g, b);
-		#else cpp
+		#elseif cpp
+			CppCurses.init_color(color_number, r, g, b);
 		#end
 	}
 
@@ -247,7 +279,8 @@ typedef ColorPair = {
 		/* Change the definition of a color-pair. It takes three arguments: the number of the color-pair to be changed, the foreground color number, and the background color number. The value of pair_number must be between 1 and COLOR_PAIRS - 1 (the 0 color pair is wired to white on black and cannot be changed). The value of fg and bg arguments must be between 0 and COLORS. If the color-pair was previously initialized, the screen is refreshed and all occurrences of that color-pair are changed to the new definition. */
 		#if python
 			PyCurses.init_pair(pair_number, fg, bg);
-		#else cpp
+		#elseif cpp
+			CppCurses.init_pair(pair_number, fg, bg);
 		#end
 	}
 
@@ -256,7 +289,8 @@ typedef ColorPair = {
   /* Note If there is an error opening the terminal, the underlying curses library may cause the interpreter to exit. */
 		#if python
 			return PyCurses.initscr();
-		#else cpp
+		#elseif cpp
+			return CppCurses.initscr();
 		#end
 	}
 
@@ -264,7 +298,8 @@ typedef ColorPair = {
 		/* Return True if resize_term() would modify the window structure, False otherwise. */
 		#if python
 			return PyCurses.is_term_resized(nlines, ncols);
-		#else cpp
+		#elseif cpp
+			return CppCurses.is_term_resized(nlines, ncols);
 		#end
 	}
 
@@ -272,7 +307,8 @@ typedef ColorPair = {
 		/* Return True if endwin() has been called (that is, the curses library has been deinitialized). */
 		#if python
 			return PyCurses.isendwin();
-		#else cpp
+		#elseif cpp
+			return CppCurses.isendwin();
 		#end
 	}
 
@@ -280,7 +316,8 @@ typedef ColorPair = {
 		/* Return the name of the key numbered k. The name of a key generating printable ASCII character is the key’s character. The name of a control-key combination is a two-character string consisting of a caret followed by the corresponding printable ASCII character. The name of an alt-key combination (128-255) is a string consisting of the prefix ‘M-‘ followed by the name of the corresponding ASCII character. */
 		#if python
 			return PyCurses.keyname(k);
-		#else cpp
+		#elseif cpp
+			return CppCurses.keyname(k);
 		#end
 	}
 
@@ -288,7 +325,8 @@ typedef ColorPair = {
 		/* Return the user’s current line kill character. Under Unix operating systems this is a property of the controlling tty of the curses program, and is not set by the curses library itself. */
 		#if python
 			return PyCurses.killchar();
-		#else cpp
+		#elseif cpp
+			return CppCurses.killchar();
 		#end
 	}
 
@@ -296,7 +334,8 @@ typedef ColorPair = {
 		/* Return a string containing the terminfo long name field describing the current terminal. The maximum length of a verbose description is 128 characters. It is defined only after the call to initscr(). */
 		#if python
 			return PyCurses.longname();
-		#else cpp
+		#elseif cpp
+			return CppCurses.longname();
 		#end
 	}
 
@@ -304,7 +343,8 @@ typedef ColorPair = {
 		/* If yes is 1, allow 8-bit characters to be input. If yes is 0, allow only 7-bit chars. */
 		#if python
 			PyCurses.meta(yes);
-		#else cpp
+		#elseif cpp
+			// TODO
 		#end
 	}
 
@@ -312,7 +352,8 @@ typedef ColorPair = {
 		/* Set the maximum time in milliseconds that can elapse between press and release events in order for them to be recognized as a click, and return the previous interval value. The default value is 200 msec, or one fifth of a second. */
 		#if python
 			PyCurses.mouseinterval(interval);
-		#else cpp
+		#elseif cpp
+			CppCurses.mouseinterval(interval);
 		#end
 	}
 
@@ -321,7 +362,10 @@ typedef ColorPair = {
 		#if python
 			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.mousemask(mousemask);
 			return new MouseMaskState(tup[0], tup[1]);
-		#else cpp
+		#elseif cpp
+			var old:MMask_t;
+			var avail:MMask_t = CppCurses.mousemask(mousemask, cpp.Pointer.addressOf(old));
+			return new MouseMaskState(avail, old);
 		#end
 	}
 
@@ -329,7 +373,8 @@ typedef ColorPair = {
 		/* Sleep for ms milliseconds. */
 		#if python
 			PyCurses.napms(ms);
-		#else cpp
+		#elseif cpp
+			CppCurses.napms(ms);
 		#end
 	}
 
@@ -339,7 +384,8 @@ typedef ColorPair = {
   /* A pad is like a window, except that it is not restricted by the screen size, and is not necessarily associated with a particular part of the screen. Pads can be used when a large window is needed, and only a part of the window will be on the screen at one time. Automatic refreshes of pads (such as from scrolling or echoing of input) do not occur. The refresh() and noutrefresh() methods of a pad require 6 arguments to specify the part of the pad to be displayed and the location on the screen to be used for the display. The arguments are pminrow, pmincol, sminrow, smincol, smaxrow, smaxcol; the p arguments refer to the upper left corner of the pad region to be displayed and the s arguments define a clipping box on the screen within which the pad region is to be displayed. */
 		#if python
 			return PyCurses.newpad(nlines, ncols);
-		#else cpp
+		#elseif cpp
+			return CppCurses.newpad(nlines, ncols);
 		#end
 	}
 
@@ -349,7 +395,9 @@ typedef ColorPair = {
 		#if python
 			if(begin_y == null || begin_x == null) return PyCurses.newwin(nlines, ncols);
 			else return PyCurses.newwin(nlines, ncols, begin_y, begin_x);
-		#else cpp
+		#elseif cpp
+			if(begin_y == null || begin_x == null) return CppCurses.newwin(nlines, ncols, 0, 0);
+			else return CppCurses.newwin(nlines, ncols, begin_y, begin_x);
 		#end
 	}
 
@@ -357,7 +405,8 @@ typedef ColorPair = {
 		/* Enter newline mode. This mode translates the return key into newline on input, and translates newline into return and line-feed on output. Newline mode is initially on. */
 		#if python
 			PyCurses.nl();
-		#else cpp
+		#elseif cpp
+			CppCurses.nl();
 		#end
 	}
 
@@ -365,7 +414,8 @@ typedef ColorPair = {
 		/* Leave cbreak mode. Return to normal “cooked” mode with line buffering. */
 		#if python
 			PyCurses.nocbreak();
-		#else cpp
+		#elseif cpp
+			CppCurses.nocbreak();
 		#end
 	}
 
@@ -373,7 +423,8 @@ typedef ColorPair = {
 		/* Leave echo mode. Echoing of input characters is turned off. */
 		#if python
 			PyCurses.noecho();
-		#else cpp
+		#elseif cpp
+			CppCurses.noecho();
 		#end
 	}
 
@@ -381,7 +432,8 @@ typedef ColorPair = {
 		/* Leave newline mode. Disable translation of return into newline on input, and disable low-level translation of newline into newline/return on output (but this does not change the behavior of addch('\n'), which always does the equivalent of return and line feed on the virtual screen). With translation off, curses can sometimes speed up vertical motion a little; also, it will be able to detect the return key on input. */
 		#if python
 			PyCurses.nonl();
-		#else cpp
+		#elseif cpp
+			CppCurses.nonl();
 		#end
 	}
 
@@ -389,7 +441,8 @@ typedef ColorPair = {
 		/* When the noqiflush() routine is used, normal flush of input and output queues associated with the INTR, QUIT and SUSP characters will not be done. You may want to call noqiflush() in a signal handler if you want output to continue as though the interrupt had not occurred, after the handler exits. */
 		#if python
 			PyCurses.noqiflush();
-		#else cpp
+		#elseif cpp
+			CppCurses.noqiflush();
 		#end
 	}
 
@@ -397,7 +450,8 @@ typedef ColorPair = {
 		/* Leave raw mode. Return to normal “cooked” mode with line buffering. */
 		#if python
 			PyCurses.noraw();
-		#else cpp
+		#elseif cpp
+			CppCurses.noraw();
 		#end
 	}
 
@@ -406,7 +460,10 @@ typedef ColorPair = {
 		#if python
 			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.pair_content(pair_number);
 			return {fg:tup[0], bg:tup[1]};
-		#else cpp
+		#elseif cpp
+			var f:Int, b:Int;
+			CppCurses.pair_content(pair_number, cpp.Pointer.addressOf(f), cpp.Pointer.addressOf(b));
+			return {fg:f, bg:b};
 		#end
 	}
 
@@ -414,7 +471,9 @@ typedef ColorPair = {
 		/* Return the number of the color-pair set by the attribute value attr. color_pair() is the counterpart to this function. */
 		#if python
 			return PyCurses.pair_number(attr);
-		#else cpp
+		#elseif cpp
+			// TODO 
+			return 0;
 		#end
 	}
 
@@ -422,15 +481,18 @@ typedef ColorPair = {
 		/* Equivalent to tputs(str, 1, putchar); emit the value of a specified terminfo capability for the current terminal. Note that the output of putp() always goes to standard output. */
 		#if python
 			PyCurses.putp(string);
-		#else cpp
+		#elseif cpp
+			CppCurses.putp(string);
 		#end
 	}
 
-  public static function qiFlush(?flag:Bool=true):Void{
+  public static function qiFlush(flag:Bool=true):Void{
 		/* If flag is False, the effect is the same as calling noqiflush(). If flag is True, or no argument is provided, the queues will be flushed when these control characters are read. */
 		#if python
 			PyCurses.qiflush(flag);
-		#else cpp
+		#elseif cpp
+			if(flag) CppCurses.qiflush();
+			else CppCurses.noqiflush();
 		#end
 	}
 
@@ -438,7 +500,8 @@ typedef ColorPair = {
 		/* Enter raw mode. In raw mode, normal line buffering and processing of interrupt, quit, suspend, and flow control keys are turned off; characters are presented to curses input functions one by one. */
 		#if python
 			PyCurses.raw();
-		#else cpp
+		#elseif cpp
+			CppCurses.raw();
 		#end
 	}
 
@@ -446,7 +509,8 @@ typedef ColorPair = {
 		/* Restore the terminal to “program” mode, as previously saved by def_prog_mode(). */
 		#if python
 			PyCurses.reset_prog_mode();
-		#else cpp
+		#elseif cpp
+			CppCurses.reset_prog_mode();
 		#end
 	}
 
@@ -454,7 +518,8 @@ typedef ColorPair = {
 		/* Restore the terminal to “shell” mode, as previously saved by def_shell_mode(). */
 		#if python
 			PyCurses.reset_shell_mode();
-		#else cpp
+		#elseif cpp
+			CppCurses.reset_shell_mode();
 		#end
 	}
 
@@ -462,7 +527,8 @@ typedef ColorPair = {
 		/* Restore the state of the terminal modes to what it was at the last call to savetty(). */
 		#if python
 			PyCurses.resetty();
-		#else cpp
+		#elseif cpp
+			CppCurses.resetty();
 		#end
 	}
 
@@ -470,7 +536,8 @@ typedef ColorPair = {
 		/* Backend function used by resizeterm(), performing most of the work; when resizing the windows, resize_term() blank-fills the areas that are extended. The calling application should fill in these areas with appropriate data. The resize_term() function attempts to resize all windows. However, due to the calling convention of pads, it is not possible to resize these without additional interaction with the application. */
 		#if python
 			PyCurses.resize_term(nlines, ncols);
-		#else cpp
+		#elseif cpp
+			CppCurses.resize_term(nlines, ncols);
 		#end
 	}
 
@@ -478,7 +545,8 @@ typedef ColorPair = {
 		/* Save the current state of the terminal modes in a buffer, usable by resetty(). */
 		#if python
 			PyCurses.savetty();
-		#else cpp
+		#elseif cpp
+			CppCurses.savetty();
 		#end
 	}
 
@@ -486,7 +554,8 @@ typedef ColorPair = {
 		/* Set the virtual screen cursor to y, x. If y and x are both -1, then leaveok is set. */
 		#if python
 			PyCurses.setsyx(y, x);
-		#else cpp
+		#elseif cpp
+			CppCurses.setsyx(y, x);
 		#end
 	}
 
@@ -494,7 +563,7 @@ typedef ColorPair = {
 	//	/* Initialize the terminal. termstr is a string giving the terminal name; if omitted, the value of the TERM environment variable will be used. fd is the file descriptor to which any initialization sequences will be sent; if not supplied, the file descriptor for sys.stdout will be used. */
 	//	#if python
 	//		PyCurses.setupterm(termstr, fd);
-	//	#else cpp
+	//	#elseif cpp
 	//	#end
 	//}
 
@@ -503,7 +572,8 @@ typedef ColorPair = {
   /* start_color() initializes eight basic colors (black, red, green, yellow, blue, magenta, cyan, and white), and two global variables in the curses module, COLORS and COLOR_PAIRS, containing the maximum number of colors and color-pairs the terminal can support. It also restores the colors on the terminal to the values they had when the terminal was just turned on. */
 		#if python
 			PyCurses.start_color();
-		#else cpp
+		#elseif cpp
+			CppCurses.start_color();
 		#end
 	}
 
@@ -511,7 +581,8 @@ typedef ColorPair = {
 		/* Return a logical OR of all video attributes supported by the terminal. This information is useful when a curses program needs complete control over the appearance of the screen. */
 		#if python
 			return PyCurses.termattrs();
-		#else cpp
+		#elseif cpp
+			return CppCurses.termattrs();
 		#end
 	}
 
@@ -519,7 +590,8 @@ typedef ColorPair = {
 		/* Return the value of the environment variable TERM, truncated to 14 characters. */
 		#if python
 			return PyCurses.termname();
-		#else cpp
+		#elseif cpp
+			return CppCurses.termname();
 		#end
 	}
 
@@ -527,7 +599,8 @@ typedef ColorPair = {
 		/* Return the value of the Boolean capability corresponding to the terminfo capability name capname. The value -1 is returned if capname is not a Boolean capability, or 0 if it is canceled or absent from the terminal description. */
 		#if python
 			return PyCurses.tigetflag(capname);
-		#else cpp
+		#elseif cpp
+			return CppCurses.tigetflag(capname);
 		#end
 	}
 
@@ -535,7 +608,8 @@ typedef ColorPair = {
 		/* Return the value of the numeric capability corresponding to the terminfo capability name capname. The value -2 is returned if capname is not a numeric capability, or -1 if it is canceled or absent from the terminal description. */
 		#if python
 			return PyCurses.tigetnum(capname);
-		#else cpp
+		#elseif cpp
+			return CppCurses.tigetnum(capname);
 		#end
 	}
 
@@ -543,7 +617,8 @@ typedef ColorPair = {
 		/* Return the value of the string capability corresponding to the terminfo capability name capname. None is returned if capname is not a string capability, or is canceled or absent from the terminal description. */
 		#if python
 			return PyCurses.tigetstr(capname);
-		#else cpp
+		#elseif cpp
+			return CppCurses.tigetstr(capname);
 		#end
 	}
 
@@ -551,7 +626,8 @@ typedef ColorPair = {
 		/* Instantiate the string str with the supplied parameters, where str should be a parameterized string obtained from the terminfo database. E.g. tparm(tigetstr("cup"), 5, 3) could result in b'\033[6;4H', the exact result depending on terminal type. */
 		#if python
 			PyCurses.tparm(str);
-		#else cpp
+		#elseif cpp
+			CppCurses.tparm(str);
 		#end
 	}
 
@@ -561,15 +637,16 @@ typedef ColorPair = {
   ///* The curses library does “line-breakout optimization” by looking for typeahead periodically while updating the screen. If input is found, and it is coming from a tty, the current update is postponed until refresh or doupdate is called again, allowing faster response to commands typed in advance. This function allows specifying a different file descriptor for typeahead checking. */
 	//	#if python
 	//		PyCurses.typeahead(fd);
-	//	#else cpp
+	//	#elseif cpp
 	//	#end
-	//}
+	//} TODO
 
   public static function unctrl(ch:Int):String{
 		/* Return a string which is a printable representation of the character ch. Control characters are displayed as a caret followed by the character, for example as ^C. Printing characters are left as they are. */
 		#if python
 			return PyCurses.unctrl(ch);
-		#else cpp
+		#elseif cpp
+			return CppCurses.unctrl(ch);
 		#end
 	}
 
@@ -578,7 +655,8 @@ typedef ColorPair = {
   /* Note Only one ch can be pushed before getch() is called. */
 		#if python
 			PyCurses.ungetch(ch);
-		#else cpp
+		#elseif cpp
+			CppCurses.ungetch(ch);
 		#end
 	}
 
@@ -587,7 +665,9 @@ typedef ColorPair = {
   /* New in version 3.5. */
 		#if python
 			PyCurses.update_lines_cols();
-		#else cpp
+		#elseif cpp
+			//CppCurses.update_lines_cols();
+			// TODO
 		#end
 	}
 
@@ -597,7 +677,8 @@ typedef ColorPair = {
   /* New in version 3.3. */
 		#if python
 			PyCurses.unget_wch(ch);
-		#else cpp
+		#elseif cpp
+			CppCurses.unget_wch(ch);
 		#end
 	}
 
@@ -605,7 +686,14 @@ typedef ColorPair = {
 		/* Push a KEY_MOUSE event onto the input queue, associating the given state data with it. */
 		#if python
 			PyCurses.ungetmouse(id, x, y, z, bstate);
-		#else cpp
+		#elseif cpp
+			var tmp:cpp.Pointer<MEVENT> = MEVENT.create();
+			tmp.ref.id = id;
+			tmp.ref.x = x;
+			tmp.ref.y = y;
+			tmp.ref.z = z;
+			tmp.ref.bstate = bstate;
+			CppCurses.ungetmouse(tmp);
 		#end
 	}
 
@@ -613,7 +701,8 @@ typedef ColorPair = {
 		/* If used, this function should be called before initscr() or newterm are called. When flag is False, the values of lines and columns specified in the terminfo database will be used, even if environment variables LINES and COLUMNS (used by default) are set, or if curses is running in a window (in which case default behavior would be to use the window size if LINES and COLUMNS are not set). */
 		#if python
 			PyCurses.use_env(flag);
-		#else cpp
+		#elseif cpp
+			CppCurses.use_env(flag);
 		#end
 	}
 
@@ -621,7 +710,8 @@ typedef ColorPair = {
 		/* Allow use of default values for colors on terminals supporting this feature. Use this to support transparency in your application. The default color is assigned to the color number -1. After calling this function, init_pair(x, curses.COLOR_RED, -1) initializes, for instance, color pair x to a red foreground color on the default background. */
 		#if python
 			PyCurses.use_default_colors();
-		#else cpp
+		#elseif cpp
+			CppCurses.use_default_colors();
 		#end
 	}
 
@@ -629,7 +719,8 @@ typedef ColorPair = {
 		/* Initialize curses and call another callable object, func, which should be the rest of your curses-using application. If the application raises an exception, this function will restore the terminal to a sane state before re-raising the exception and generating a traceback. The callable object func is then passed the main window ‘stdscr’ as its first argument, followed by any other arguments passed to wrapper(). Before calling func, wrapper() turns on cbreak mode, turns off echo, enables the terminal keypad, and initializes colors if the terminal has color support. On exit (whether normally or by exception) it restores cooked mode, turns on echo, and disables the terminal keypad. */
 		#if python
 			PyCurses.wrapper(func, xs);
-		#else cpp
+		#elseif cpp
+			throw "Not supported in C++ target.";
 		#end
 	}
 

@@ -5,15 +5,21 @@ import cpp.Pointer;
 import cpp.ConstPointer;
 import cpp.UInt32;
 import cpp.UInt64;
-import cpp.Int32 as Short;
 import haxe.extern.Rest; 
 
+abstract Short(cpp.Int32) from Int to Int{}
 typedef Attrs = Int; 			// attr_t
 typedef Null = Pointer<cpp.Void>; // void*, but should always be 0.
 typedef WInt = UInt32;
 typedef MMask_t = UInt64; // mmask_t;
 
 @:enum abstract CONSTS(Null) to Null{ var Nothing = null; }
+
+@:enum abstract CURS_VISIBILITY(Int) to Int{
+	var INVISIBLE = 0;
+	var NORMAL = 1;
+	var VISIBLE = 2;
+}
 
 @:include("curses.h") 
 @:buildXml("
@@ -22,6 +28,8 @@ typedef MMask_t = UInt64; // mmask_t;
 </target>
 ")
 @:final extern class Curses{
+
+	@:native("COLORS") public static var COLORS:Int;
 
 	@:native("COLOR_PAIR") static public function color_pair(n:Int):CHType;
 
@@ -134,7 +142,7 @@ typedef MMask_t = UInt64; // mmask_t;
 	@:native("erasewchar") static public function erasewchar(ch:Pointer<WChar_t>):STATE;
 	@:native("has_ic") static public function has_ic():Bool;
 	@:native("has_il") static public function has_il():Bool;
-	@:native("killchar") static public function killchar():Char;
+	@:native("killchar") static public function killchar():String;//Char;
 	@:native("killwchar") static public function killwchar(ch:Pointer<WChar_t>):STATE;
 	@:native("longname") static public function longname():String;
 	@:native("term_attrs") static public function term_attrs():Attrs;
@@ -253,7 +261,7 @@ typedef MMask_t = UInt64; // mmask_t;
   @:native("getsyx") static public function getsyx(y:Int, x:Int):Void;
   @:native("setsyx") static public function setsyx(y:Int, x:Int):Void;
 	//@:native("ripoffline") static public function ripoffline(line:Int, int (*init)(WINDOW *, int:Pointer<Window>)):STATE;
-	@:native("curs_set") static public function curs_set(visibility:Int):STATE;
+	@:native("curs_set") static public function curs_set(visibility:CURS_VISIBILITY):STATE;
 	@:native("napms") static public function napms(ms:Int):STATE;
 
  /* curs_extend(3X)**/
@@ -269,7 +277,7 @@ typedef MMask_t = UInt64; // mmask_t;
   @:native("set_curterm") static public function set_curterm(nterm:Pointer<Terminal>):Pointer<Terminal>;
 	@:native("del_curterm") static public function del_curterm(oterm:Pointer<Terminal>):STATE;
 	@:native("restartterm") static public function restartterm(term:String, fildes:Int, errret:Pointer<Int>):STATE;
-	//@:native("tparm") static public function tparm(str:String, ...):String;
+	@:native("tparm") static public function tparm(str:String):String; //...):String;
 	//@:native("tputs") static public function tputs(const str:String, affcnt:Int, int (*putc)(int)):STATE;
 	@:native("putp") static public function putp(str:String):STATE;
 	//@:native("vidputs") static public function vidputs(attrs:CHType, int (*putc)(int)):STATE;
@@ -620,7 +628,7 @@ typedef MMask_t = UInt64; // mmask_t;
 
 }
 
-@:enum extern abstract STATE(Int){
+@:enum extern abstract STATE(Int) to Int{
 	@:native("ERR") var ERR;
 	@:native("OK") var OK;
 }
@@ -682,16 +690,21 @@ typedef MMask_t = UInt64; // mmask_t;
 
 @:native("MEVENT")
 @:structAccess
+@:unreflective
 @:final extern class MEVENT{
 	var id:Short; /* ID to distinguish multiple devices */
 	var x:Int;    /* event coordinates */
 	var y:Int;    	
 	var z:Int;
+	var bstate:Int;
 	// mmask_t bstate /* button state bits */
+
+	@:native("new MEVENT")
+	public static function create():Pointer<MEVENT>;
 }
 
 @:native("wchar_t")
-@:final extern class WChar_t{}
+@:final extern abstract WChar_t(Int) from Int{}
 
 @:native("TERMINAL")
 @:final extern class Terminal{}
@@ -768,7 +781,7 @@ typedef MMask_t = UInt64; // mmask_t;
 }
 
 @:native("chtype")
-@:final extern abstract CHType(UInt32) from Int{}
+@:final extern abstract CHType(UInt32) from UInt32 to UInt32{}
 @:final @:enum extern abstract CHType_Const(CHType) to CHType{
 /* VT100 symbols begin here */
 	@:native("ACS_ULCORNER") var ACS_ULCORNER;  // NCURSES_ACS('l') /* upper left corner */
