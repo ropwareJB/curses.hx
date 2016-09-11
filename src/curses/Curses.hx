@@ -7,6 +7,7 @@ import curses.RGB;
 	typedef CURS_VISIBILITY = curses.py.Curses.CURS_VISIBILITY;
 #elseif cpp
 	import curses.cpp.Curses as CppCurses;
+	import cpp.AtomicInt;
 	typedef CURS_VISIBILITY = curses.cpp.Curses.CURS_VISIBILITY;
 	typedef MMask_t = curses.cpp.Curses.MMask_t;
 	typedef MEVENT = curses.cpp.Curses.MEVENT;
@@ -71,10 +72,11 @@ typedef ColorPair = {
 			var tup3 = PyCurses.color_content(color_number).toArray();
 			return new RGB(tup3[0], tup3[1], tup3[2]);
 		#elseif cpp
-			var r:Int, g:Int, b:Int;
-			CppCurses.color_content(color_number, cpp.Pointer.addressOf(r), 
-									cpp.Pointer.addressOf(g), cpp.Pointer.addressOf(b));
-			return new RGB(r, g, b);
+			var r:cpp.Pointer<cpp.Int16> = cpp.Stdlib.malloc(cpp.Stdlib.sizeof(cpp.Int16));
+			var g:cpp.Pointer<cpp.Int16> = cpp.Stdlib.malloc(cpp.Stdlib.sizeof(cpp.Int16)); 
+			var b:cpp.Pointer<cpp.Int16> = cpp.Stdlib.malloc(cpp.Stdlib.sizeof(cpp.Int16));
+			CppCurses.color_content(color_number, r, g, b);
+			return new RGB(r.ref, g.ref, b.ref);
 		#end
 	}
 
@@ -204,7 +206,7 @@ typedef ColorPair = {
 			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.getsyx();
 			return new Point(tup[1], tup[0]);
 		#elseif cpp
-			var x:Int, y:Int;
+			var x:Int=0, y:Int=0;
 			CppCurses.getsyx(y,x);
 			return new Point(x,y);
 		#end
@@ -357,14 +359,14 @@ typedef ColorPair = {
 		#end
 	}
 
-  public static function mouseMask(mousemask:Int):MouseMaskState{
+  public static function mouseMask(mmmask:Int):MouseMaskState{
 		/* Set the mouse events to be reported, and return a tuple (availmask, oldmask). availmask indicates which of the specified mouse events can be reported; on complete failure it returns 0. oldmask is the previous value of the given window’s mouse event mask. If this function is never called, no mouse events are ever reported. */
 		#if python
-			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.mousemask(mousemask);
+			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.mousemask(mmmask);
 			return new MouseMaskState(tup[0], tup[1]);
 		#elseif cpp
-			var old:MMask_t;
-			var avail:MMask_t = CppCurses.mousemask(mousemask, cpp.Pointer.addressOf(old));
+			var old:MMask_t = 0;
+			var avail:MMask_t = CppCurses.mousemask(mmmask, cpp.Pointer.addressOf(old));
 			return new MouseMaskState(avail, old);
 		#end
 	}
@@ -461,9 +463,10 @@ typedef ColorPair = {
 			var tup:python.Tuple.Tuple2<Int,Int> = PyCurses.pair_content(pair_number);
 			return {fg:tup[0], bg:tup[1]};
 		#elseif cpp
-			var f:Int, b:Int;
-			CppCurses.pair_content(pair_number, cpp.Pointer.addressOf(f), cpp.Pointer.addressOf(b));
-			return {fg:f, bg:b};
+			var f:cpp.Pointer<cpp.Int16> = cpp.Stdlib.malloc(cpp.Stdlib.sizeof(cpp.Int16));
+			var b:cpp.Pointer<cpp.Int16> = cpp.Stdlib.malloc(cpp.Stdlib.sizeof(cpp.Int16));
+			CppCurses.pair_content(pair_number, f, b);
+			return {fg:f.ref, bg:b.ref};
 		#end
 	}
 

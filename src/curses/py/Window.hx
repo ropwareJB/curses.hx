@@ -23,6 +23,9 @@ import python.Tuple;
 	@:overload(function(y:Int, x:Int, str:String, ?attr:Int):Void{})
 	public function addstr(str:String, attr:Int):Void;
 	/* Paint the string str at (y, x) with attributes attr, overwriting anything previously on the display. */
+	public inline function str(y:Int, x:Int, str:String, ?attr:Int):Void{
+		this.addstr(y, x, str, attr);
+	}
 
 	public function attroff(attr:Int):Void;
 	/* Remove attribute attr from the “background” set applied to all writes to the current window. */

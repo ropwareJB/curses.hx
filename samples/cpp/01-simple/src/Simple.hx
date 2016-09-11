@@ -7,7 +7,7 @@ import cpp.Pointer;
 class Simple{
 
 	public static function main(){
-		var stdscr:Pointer<Window> = Curses.initscr();
+		var stdscr:Window = Curses.initscr();
 
 		Curses.mvaddstr(13, 33, "This is a test :)");
 		Curses.refresh();
