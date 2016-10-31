@@ -5,13 +5,11 @@ Now you can make pretty terminal applications in Haxe.
 
 Curses is a library for writing GUI-like interfaces in terminal applications.  
 
-**This repository is very new, so not many targets are currently supported**  
-
 ---
 
 #### Samples
 ##### Haxe
-+ [Simple Text Positioning](samples/py/01-simple)   
++ [Simple Text Positioning](samples/haxe/01-simple)   
 
 ##### Python
 + [Simple Text Positioning](samples/py/01-simple)   
@@ -24,6 +22,11 @@ Curses is a library for writing GUI-like interfaces in terminal applications.
 + [Window Borders](samples/cpp/05-border)  
 
 ----
+
+#### Installation
+```
+haxelib git curses https://github.com/Montycarlo/curses.hx.git 
+```
 
 #### Help! This doesn't work on Windows  
 'True' Curses was never really ported to Windows. I'm aware of UniCurses for the python taraget which has a Windows implementation, but I'm not sure about others. Something to do more research on.     
